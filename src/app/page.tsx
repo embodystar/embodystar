@@ -5,11 +5,12 @@ import {
   Cpu, Layers, Eye, Zap, Terminal as TerminalIcon, 
   Sliders, Code, ChevronRight, RefreshCw, Compass, 
   Check, Mail, ArrowRight, Navigation, 
-  BookOpen, Send, Monitor
+  BookOpen, Send, Monitor, Globe
 } from "lucide-react";
 import { ThreeSandbox } from "../components/ThreeSandbox";
 import { AnalyticsDashboard } from "../components/AnalyticsDashboard";
 import { PipelineBuilder } from "../components/PipelineBuilder";
+import { useTranslation } from "../context/LanguageContext";
 
 // --- Types ---
 interface AgentNode {
@@ -45,6 +46,8 @@ interface SandboxObstacle {
 }
 
 export default function Home() {
+  const { language, setLanguage, t } = useTranslation();
+  
   // --- Navigation & UI State ---
   const [activeTab, setActiveTab] = useState<"python" | "typescript">("python");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -716,26 +719,51 @@ export default function Home() {
 
             {/* Desktop Links */}
             <div className="hidden md:flex items-center gap-8 text-sm font-medium text-neutral-400">
-              <a href="#technology" className="hover:text-cyan-400 transition-colors">Technology</a>
-              <a href="#dashboard" className="hover:text-cyan-400 transition-colors">Control Console</a>
-              <a href="#sandbox" className="hover:text-cyan-400 transition-colors">Simulation Sandbox</a>
-              <a href="#sdk" className="hover:text-cyan-400 transition-colors">Developer SDK</a>
-              <a href="#connect" className="hover:text-cyan-400 transition-colors">Get Started</a>
+              <a href="#technology" className="hover:text-cyan-400 transition-colors">{t("nav_technology")}</a>
+              <a href="#dashboard" className="hover:text-cyan-400 transition-colors">{t("nav_dashboard")}</a>
+              <a href="#sandbox" className="hover:text-cyan-400 transition-colors">{t("nav_sandbox")}</a>
+              <a href="#sdk" className="hover:text-cyan-400 transition-colors">{t("nav_sdk")}</a>
+              <a href="#connect" className="hover:text-cyan-400 transition-colors">{t("nav_connect")}</a>
             </div>
 
             {/* CTA Button */}
             <div className="hidden md:flex items-center gap-4">
+              {/* Language Selector */}
+              <div className="flex items-center gap-2 border border-neutral-800 bg-neutral-900/40 px-2.5 py-1.5 rounded-full text-[10px] text-neutral-400 font-mono">
+                <Globe className="h-3 w-3 text-cyan-400 animate-pulse" />
+                <button 
+                  onClick={() => setLanguage("en")} 
+                  className={`transition-colors cursor-pointer ${language === "en" ? "text-cyan-400 font-bold" : "hover:text-neutral-200"}`}
+                >
+                  EN
+                </button>
+                <span className="text-neutral-800">|</span>
+                <button 
+                  onClick={() => setLanguage("es")} 
+                  className={`transition-colors cursor-pointer ${language === "es" ? "text-cyan-400" : "hover:text-neutral-200"}`}
+                >
+                  ES
+                </button>
+                <span className="text-neutral-800">|</span>
+                <button 
+                  onClick={() => setLanguage("zh")} 
+                  className={`transition-colors cursor-pointer ${language === "zh" ? "text-cyan-400" : "hover:text-neutral-200"}`}
+                >
+                  ZH
+                </button>
+              </div>
+
               <a 
                 href="#dashboard" 
                 className="px-4 py-2 text-xs font-semibold rounded-full border border-neutral-800 bg-neutral-900/50 text-neutral-300 hover:text-white hover:border-cyan-500 hover:bg-cyan-950/10 transition-all"
               >
-                Developer Docs
+                {t("nav_docs")}
               </a>
               <a 
                 href="#connect" 
                 className="px-4 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-cyan-500 to-fuchsia-600 text-white hover:from-cyan-400 hover:to-fuchsia-500 shadow-md shadow-cyan-600/10 hover:shadow-cyan-500/20 transition-all flex items-center gap-1.5"
               >
-                Connect Node
+                {t("nav_connect_node")}
                 <ArrowRight className="h-3.5 w-3.5" />
               </a>
             </div>
@@ -763,11 +791,36 @@ export default function Home() {
         {/* Mobile Dropdown Links */}
         {isMenuOpen && (
           <div className="md:hidden bg-neutral-950 border-b border-neutral-900 px-4 pt-2 pb-4 space-y-2">
-            <a href="#technology" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-neutral-300 hover:bg-neutral-900 hover:text-white">Technology</a>
-            <a href="#dashboard" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-neutral-300 hover:bg-neutral-900 hover:text-white">Control Console</a>
-            <a href="#sandbox" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-neutral-300 hover:bg-neutral-900 hover:text-white">Simulation Sandbox</a>
-            <a href="#sdk" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-neutral-300 hover:bg-neutral-900 hover:text-white">Developer SDK</a>
-            <a href="#connect" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-cyan-400 hover:bg-neutral-900 hover:text-white">Get Started</a>
+            <a href="#technology" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-neutral-300 hover:bg-neutral-900 hover:text-white">{t("nav_technology")}</a>
+            <a href="#dashboard" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-neutral-300 hover:bg-neutral-900 hover:text-white">{t("nav_dashboard")}</a>
+            <a href="#sandbox" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-neutral-300 hover:bg-neutral-900 hover:text-white">{t("nav_sandbox")}</a>
+            <a href="#sdk" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-neutral-300 hover:bg-neutral-900 hover:text-white">{t("nav_sdk")}</a>
+            <a href="#connect" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-cyan-400 hover:bg-neutral-900 hover:text-white">{t("nav_connect")}</a>
+            
+            {/* Mobile Language Selector */}
+            <div className="flex items-center gap-4 px-3 py-2 border-t border-neutral-900 mt-2 pt-3">
+              <span className="text-xs text-neutral-500 font-mono flex items-center gap-1.5">
+                <Globe className="h-3 w-3" /> LANG:
+              </span>
+              <button 
+                onClick={() => setLanguage("en")} 
+                className={`text-sm font-semibold ${language === "en" ? "text-cyan-400" : "text-neutral-400"}`}
+              >
+                EN
+              </button>
+              <button 
+                onClick={() => setLanguage("es")} 
+                className={`text-sm font-semibold ${language === "es" ? "text-cyan-400" : "text-neutral-400"}`}
+              >
+                ES
+              </button>
+              <button 
+                onClick={() => setLanguage("zh")} 
+                className={`text-sm font-semibold ${language === "zh" ? "text-cyan-400" : "text-neutral-400"}`}
+              >
+                ZH
+              </button>
+            </div>
           </div>
         )}
       </nav>
@@ -784,22 +837,22 @@ export default function Home() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
               </span>
-              Next-Gen Spatial Intelligence Platform
+              {t("hero_badge")}
             </div>
 
             {/* Heading */}
             <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight mb-6">
               <span className="block bg-gradient-to-r from-white via-neutral-100 to-cyan-200 bg-clip-text text-transparent">
-                Where Artificial Minds
+                {t("hero_title_1")}
               </span>
               <span className="block bg-gradient-to-r from-cyan-400 via-fuchsia-400 to-purple-500 bg-clip-text text-transparent mt-1 pb-1">
-                Inhabit Physical Reality
+                {t("hero_title_2")}
               </span>
             </h1>
 
             {/* Subheading */}
             <p className="text-base sm:text-lg text-neutral-400 max-w-xl leading-relaxed mb-8">
-              An open, distributed foundation for embodied intelligence. Powering autonomous agents that see, hear, reason, navigate, and act across physical robotics and high-fidelity virtual simulations.
+              {t("hero_subtitle")}
             </p>
 
             {/* CTAs */}
@@ -808,14 +861,14 @@ export default function Home() {
                 href="#dashboard" 
                 className="px-8 py-4 rounded-full bg-gradient-to-r from-cyan-500 to-fuchsia-600 text-white font-bold text-sm shadow-xl shadow-cyan-500/15 hover:shadow-cyan-500/30 hover:from-cyan-400 hover:to-fuchsia-500 transition-all flex items-center justify-center gap-2 group"
               >
-                Launch Control Console
+                {t("hero_cta_console")}
                 <ChevronRight className="h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
               </a>
               <a 
                 href="#sandbox" 
                 className="px-8 py-4 rounded-full border border-neutral-800 bg-neutral-900/40 text-neutral-200 hover:text-white hover:border-cyan-500/40 font-semibold text-sm transition-all hover:bg-neutral-900 flex items-center justify-center gap-2"
               >
-                Play Sandbox Simulation
+                {t("hero_cta_sandbox")}
               </a>
             </div>
 
@@ -909,12 +962,12 @@ export default function Home() {
       {/* --- SECTION 1: TECHNOLOGY SHOWCASE (GRID) --- */}
       <section id="technology" className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-neutral-900 z-10">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-cyan-500 mb-3">Core Infrastructure</h2>
+          <h2 className="text-xs font-bold uppercase tracking-widest text-cyan-500 mb-3">{t("core_badge")}</h2>
           <p className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-            Engineered for physical-digital cognitive workflows
+            {t("core_title_1")} <span className="text-cyan-400">{t("core_title_2")}</span>
           </p>
           <p className="text-neutral-400 mt-4 max-w-xl mx-auto">
-            Our technology bridges multi-modal deep models with low-level actuator torques, delivering safe, spatial-cognitive agency.
+            {t("core_subtitle")}
           </p>
         </div>
 
@@ -926,9 +979,9 @@ export default function Home() {
             <div className="h-12 w-12 rounded-xl bg-fuchsia-600/10 border border-fuchsia-500/20 text-fuchsia-400 flex items-center justify-center mb-6">
               <Cpu className="h-6 w-6" />
             </div>
-            <h3 className="text-lg font-bold text-white mb-2">Multimodal Core Engine</h3>
+            <h3 className="text-lg font-bold text-white mb-2">{t("core_multimodal_title")}</h3>
             <p className="text-neutral-400 text-sm leading-relaxed">
-              Proprietary transformer-based foundation models trained on 3D sensory inputs and physical interactions. Computes dynamic force controls natively.
+              {t("core_multimodal_desc")}
             </p>
           </div>
 
@@ -938,9 +991,9 @@ export default function Home() {
             <div className="h-12 w-12 rounded-xl bg-purple-600/10 border border-purple-500/20 text-purple-400 flex items-center justify-center mb-6">
               <Eye className="h-6 w-6" />
             </div>
-            <h3 className="text-lg font-bold text-white mb-2">Real-time Spatial Lidar</h3>
+            <h3 className="text-lg font-bold text-white mb-2">{t("core_lidar_title")}</h3>
             <p className="text-neutral-400 text-sm leading-relaxed">
-              Integrates point cloud grids with semantic understanding. Computes spatial bounds, geometry mapping, and movement routes on the edge.
+              {t("core_lidar_desc")}
             </p>
           </div>
 
@@ -950,9 +1003,9 @@ export default function Home() {
             <div className="h-12 w-12 rounded-xl bg-cyan-600/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center mb-6">
               <Layers className="h-6 w-6" />
             </div>
-            <h3 className="text-lg font-bold text-white mb-2">Cooperative Agent Swarms</h3>
+            <h3 className="text-lg font-bold text-white mb-2">{t("core_swarms_title")}</h3>
             <p className="text-neutral-400 text-sm leading-relaxed">
-              Decentralized consensus protocol that coordinates physical drones, robotic manipulators, and virtual NPCs synchronously.
+              {t("core_swarms_desc")}
             </p>
           </div>
 
@@ -968,13 +1021,13 @@ export default function Home() {
           <div className="lg:col-span-5 flex flex-col justify-center">
             <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-cyan-400 uppercase tracking-widest mb-3">
               <Monitor className="h-4 w-4" />
-              Real-Time Control Interface
+              {t("console_badge")}
             </div>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-6">
-              Empirical Sensor-Action Loop Interface
+              {t("console_title")}
             </h2>
             <p className="text-neutral-400 leading-relaxed mb-6">
-              Watch an embodied agent observe its surrounding environment and compute trajectories in real time. Use the direct system commands below to trigger active perception.
+              {t("console_desc")}
             </p>
 
             {/* Quick dashboard trigger controls */}
@@ -988,8 +1041,8 @@ export default function Home() {
                   <RefreshCw className={`h-4 w-4 ${isLidarScanning ? "animate-spin" : ""}`} />
                 </div>
                 <div>
-                  <div className="text-white">Scan Lidar Mesh</div>
-                  <div className="text-neutral-500 font-normal text-[10px] mt-0.5">3D point acquisition</div>
+                  <div className="text-white">{t("console_btn_scan_mesh")}</div>
+                  <div className="text-neutral-500 font-normal text-[10px] mt-0.5">{t("console_btn_scan_mesh_desc")}</div>
                 </div>
               </button>
 
@@ -1001,8 +1054,8 @@ export default function Home() {
                   <Navigation className="h-4 w-4 animate-pulse" />
                 </div>
                 <div>
-                  <div className="text-white">Dispatch Agent</div>
-                  <div className="text-neutral-500 font-normal text-[10px] mt-0.5">Push route parameters</div>
+                  <div className="text-white">{t("console_btn_dispatch")}</div>
+                  <div className="text-neutral-500 font-normal text-[10px] mt-0.5">{t("console_btn_dispatch_desc")}</div>
                 </div>
               </button>
 
@@ -1014,8 +1067,8 @@ export default function Home() {
                   <Zap className="h-4 w-4" />
                 </div>
                 <div>
-                  <div className="text-white">Calibrate Grasp</div>
-                  <div className="text-neutral-500 font-normal text-[10px] mt-0.5">Force closed-loop test</div>
+                  <div className="text-white">{t("console_btn_calibrate")}</div>
+                  <div className="text-neutral-500 font-normal text-[10px] mt-0.5">{t("console_btn_calibrate_desc")}</div>
                 </div>
               </button>
 
@@ -1027,8 +1080,8 @@ export default function Home() {
                   <Sliders className="h-4 w-4" />
                 </div>
                 <div>
-                  <div className="text-white">Zero-Drift IMU</div>
-                  <div className="text-neutral-500 font-normal text-[10px] mt-0.5">Re-align 18-DOF motor</div>
+                  <div className="text-white">{t("console_btn_imu")}</div>
+                  <div className="text-neutral-500 font-normal text-[10px] mt-0.5">{t("console_btn_imu_desc")}</div>
                 </div>
               </button>
             </div>
@@ -1113,12 +1166,12 @@ export default function Home() {
       <section id="sandbox" className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-neutral-900 z-10">
         
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-cyan-500 mb-3">Live Simulation Sandbox</h2>
+          <h2 className="text-xs font-bold uppercase tracking-widest text-cyan-500 mb-3">{t("sandbox_badge")}</h2>
           <p className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-            Observe Steering & Collision Avoidance
+            {t("sandbox_title_1")} <span className="text-cyan-400">{t("sandbox_title_2")}</span>
           </p>
           <p className="text-neutral-400 mt-4 max-w-xl mx-auto">
-            These mock agents navigate towards the target (green sphere) using dynamic steering vector mathematics, planning paths around user-placed obstacles in real-time.
+            {t("sandbox_desc")}
           </p>
         </div>
 
@@ -1138,7 +1191,7 @@ export default function Home() {
                     state.obstacles = [];
                     addLog("[SANDBOX] Cleared all static obstacle constraints from simulation.");
                   }}
-                  className="text-[10px] font-mono font-bold border border-neutral-800 bg-neutral-900 px-2 py-1 rounded hover:text-white hover:border-red-500 hover:bg-red-950/10 transition-all"
+                  className="text-[10px] font-mono font-bold border border-neutral-800 bg-neutral-900 px-2 py-1 rounded hover:text-white hover:border-red-500 hover:bg-red-950/10 transition-all cursor-pointer"
                 >
                   Clear Obstacles
                 </button>
@@ -1148,7 +1201,7 @@ export default function Home() {
                     state.isNavigating = !state.isNavigating;
                     addLog(`[SANDBOX] Simulation execution ${state.isNavigating ? "RESUMED" : "PAUSED"}.`);
                   }}
-                  className="text-[10px] font-mono font-bold border border-neutral-800 bg-neutral-900 px-2 py-1 rounded hover:text-white hover:border-cyan-500 transition-all flex items-center gap-1"
+                  className="text-[10px] font-mono font-bold border border-neutral-800 bg-neutral-900 px-2 py-1 rounded hover:text-white hover:border-cyan-500 transition-all flex items-center gap-1 cursor-pointer"
                 >
                   Pause / Resume
                 </button>
@@ -1166,7 +1219,7 @@ export default function Home() {
             <div>
               <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                 <Compass className="h-5 w-5 text-cyan-400" />
-                Algorithmic Dynamics
+                {t("sandbox_instructions_title")}
               </h3>
               
               <div className="space-y-4 text-xs text-neutral-400">
@@ -1175,7 +1228,7 @@ export default function Home() {
                     1
                   </div>
                   <p className="leading-relaxed">
-                    <strong className="text-white">Steering Vector Field:</strong> Agents calculate target attraction forces proportional to distance, scaling down to zero speed within threshold zones.
+                    {t("sandbox_instruction_1")}
                   </p>
                 </div>
 
@@ -1184,7 +1237,7 @@ export default function Home() {
                     2
                   </div>
                   <p className="leading-relaxed">
-                    <strong className="text-white">Active Avoidance:</strong> Each agent maps obstacles inside its sensor sweep range, generating strong lateral torque velocities to steer around barriers cleanly.
+                    {t("sandbox_instruction_2")}
                   </p>
                 </div>
 
@@ -1193,7 +1246,7 @@ export default function Home() {
                     3
                   </div>
                   <p className="leading-relaxed">
-                    <strong className="text-white">Local Coordinate Synced:</strong> Live spatial parameters are streamed directly into our API kernel loop, proving seamless agent routing capabilities.
+                    {t("sandbox_instruction_3")}
                   </p>
                 </div>
               </div>
@@ -1211,7 +1264,7 @@ export default function Home() {
                   };
                   addLog(`[SANDBOX] Random target vector calculated: {x: ${state.target.x.toFixed(0)}, y: ${state.target.y.toFixed(0)}}`);
                 }}
-                className="w-full text-center px-4 py-3 rounded-xl bg-cyan-600/10 border border-cyan-500/20 text-cyan-400 hover:text-white hover:bg-cyan-600 transition-all text-xs font-bold"
+                className="w-full text-center px-4 py-3 rounded-xl bg-cyan-600/10 border border-cyan-500/20 text-cyan-400 hover:text-white hover:bg-cyan-600 transition-all text-xs font-bold cursor-pointer"
               >
                 Randomize Target Path
               </button>
@@ -1245,13 +1298,13 @@ export default function Home() {
           <div className="lg:col-span-5 flex flex-col justify-center">
             <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-cyan-400 uppercase tracking-widest mb-3">
               <Code className="h-4 w-4" />
-              Developer SDK Interface
+              {t("sdk_badge")}
             </div>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-6">
-              Surgical Control in Ten Lines of Code
+              {t("sdk_title_1")} <span className="text-cyan-400">{t("sdk_title_2")}</span>
             </h2>
             <p className="text-neutral-400 leading-relaxed mb-6">
-              The embodystar SDK is a unified developer package designed to command diverse robotic actuators and virtual avatars. Integrate multi-modal sensory pipelines and path-planners effortlessly.
+              {t("sdk_desc")}
             </p>
 
             <div className="space-y-4">
@@ -1285,7 +1338,7 @@ export default function Home() {
                       : "text-neutral-500 hover:text-neutral-300"
                   }`}
                 >
-                  python-sdk
+                  {t("sdk_python")}
                 </button>
                 <button 
                   onClick={() => setActiveTab("typescript")} 
@@ -1295,7 +1348,7 @@ export default function Home() {
                       : "text-neutral-500 hover:text-neutral-300"
                   }`}
                 >
-                  typescript-sdk
+                  {t("sdk_typescript")}
                 </button>
               </div>
 
@@ -1390,9 +1443,9 @@ export default function Home() {
               </div>
               <button 
                 type="submit"
-                className="w-full text-center px-4 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-fuchsia-600 text-white hover:from-cyan-400 hover:to-fuchsia-500 font-semibold text-xs shadow-md shadow-cyan-600/10 hover:shadow-cyan-500/20 transition-all flex items-center justify-center gap-2"
+                className="w-full text-center px-4 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-fuchsia-600 text-white hover:from-cyan-400 hover:to-fuchsia-500 font-semibold text-xs shadow-md shadow-cyan-600/10 hover:shadow-cyan-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                {isSubscribed ? "Verification Sent!" : "Register Node / Email"}
+                {isSubscribed ? "Verification Sent!" : t("connect_form_submit_newsletter")}
                 <ArrowRight className="h-3.5 w-3.5" />
               </button>
             </form>
@@ -1400,14 +1453,14 @@ export default function Home() {
             {isSubscribed && (
               <div className="mt-4 p-3 bg-cyan-950/20 border border-cyan-500/35 rounded-xl flex items-start gap-2.5 text-xs text-cyan-400">
                 <Check className="h-4.5 w-4.5 shrink-0" />
-                <p>Node registry successful. Please check your mailbox to authenticate coordinates.</p>
+                <p>{t("connect_success_newsletter")}</p>
               </div>
             )}
           </div>
 
           {/* Contact Form */}
           <div className="lg:col-span-7 bg-neutral-950 border border-neutral-900 rounded-2xl p-8 shadow-2xl">
-            <h3 className="text-lg font-bold text-white mb-2">Initiate Coordination</h3>
+            <h3 className="text-lg font-bold text-white mb-2">{t("connect_title")}</h3>
             <p className="text-xs text-neutral-400 leading-relaxed mb-6">
               Looking to deploy embodystar models onto bespoke physical robot arms or request hardware partnership? Connect with our technical coordination core.
             </p>
@@ -1415,7 +1468,7 @@ export default function Home() {
             <form onSubmit={handleContactSubmit} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-2 font-mono">Researcher Name</label>
+                  <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-2 font-mono">{t("connect_form_name")}</label>
                   <input 
                     type="text" 
                     value={contactForm.name}
@@ -1426,7 +1479,7 @@ export default function Home() {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-2 font-mono">Affiliation Email</label>
+                  <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-2 font-mono">{t("connect_form_email")}</label>
                   <input 
                     type="email" 
                     value={contactForm.email}
@@ -1438,7 +1491,7 @@ export default function Home() {
                 </div>
               </div>
               <div>
-                <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-2 font-mono">Task Objective / Query Parameters</label>
+                <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-2 font-mono">{t("connect_form_message")}</label>
                 <textarea 
                   rows={4}
                   value={contactForm.message}
@@ -1450,9 +1503,9 @@ export default function Home() {
               </div>
               <button 
                 type="submit"
-                className="px-6 py-3 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-300 hover:text-white font-bold text-xs transition-all flex items-center justify-center gap-2"
+                className="px-6 py-3 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-300 hover:text-white font-bold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                {isSubmitted ? "Payload Transmitted" : "Transmit Query"}
+                {isSubmitted ? "Payload Transmitted" : t("connect_form_submit_join")}
                 <Send className="h-3.5 w-3.5" />
               </button>
             </form>
@@ -1460,7 +1513,7 @@ export default function Home() {
             {isSubmitted && (
               <div className="mt-4 p-3 bg-cyan-950/20 border border-cyan-500/35 rounded-xl flex items-start gap-2.5 text-xs text-cyan-400">
                 <Check className="h-4.5 w-4.5 shrink-0" />
-                <p>Task packet payload accepted. An engineer will coordinate dynamic replies shortly.</p>
+                <p>{t("connect_success_join")}</p>
               </div>
             )}
           </div>
@@ -1474,7 +1527,7 @@ export default function Home() {
               <img src="/embodystar_avatar.jpg" alt="Logo" className="h-full w-full object-cover" />
             </div>
             <span className="font-bold text-neutral-300">embodystar</span>
-            <span className="text-xs text-neutral-600">| Embodied Agency Laboratory © 2026</span>
+            <span className="text-xs text-neutral-600">| {t("footer_rights")}</span>
           </div>
 
           <div className="flex items-center gap-6 font-mono text-xs">
