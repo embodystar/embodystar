@@ -7,6 +7,9 @@ import {
   Check, Mail, ArrowRight, Navigation, 
   BookOpen, Send, Monitor
 } from "lucide-react";
+import { ThreeSandbox } from "../components/ThreeSandbox";
+import { AnalyticsDashboard } from "../components/AnalyticsDashboard";
+import { PipelineBuilder } from "../components/PipelineBuilder";
 
 // --- Types ---
 interface AgentNode {
@@ -1031,35 +1034,8 @@ export default function Home() {
             </div>
 
             {/* Simulated Live System Metrics */}
-            <div className="grid grid-cols-2 gap-4 mt-6 p-4 rounded-xl border border-neutral-900 bg-neutral-900/10">
-              <div>
-                <div className="text-neutral-500 text-[10px] font-bold uppercase tracking-wider">Perception CPU</div>
-                <div className="flex items-baseline gap-1.5 mt-1">
-                  <span className="text-lg font-bold text-white">{consoleMetric.cpu}%</span>
-                  <span className="text-[10px] text-green-500 font-medium">Dynamic</span>
-                </div>
-              </div>
-              <div>
-                <div className="text-neutral-500 text-[10px] font-bold uppercase tracking-wider">Map Confidence</div>
-                <div className="flex items-baseline gap-1.5 mt-1">
-                  <span className="text-lg font-bold text-cyan-400">{consoleMetric.confidence}%</span>
-                  <span className="text-[10px] text-neutral-500 font-normal">Stereo</span>
-                </div>
-              </div>
-              <div>
-                <div className="text-neutral-500 text-[10px] font-bold uppercase tracking-wider">Planner Latency</div>
-                <div className="flex items-baseline gap-1.5 mt-1">
-                  <span className="text-lg font-bold text-white">{consoleMetric.latency}ms</span>
-                  <span className="text-[10px] text-green-500 font-medium">Core API</span>
-                </div>
-              </div>
-              <div>
-                <div className="text-neutral-500 text-[10px] font-bold uppercase tracking-wider">Actuator Torque</div>
-                <div className="flex items-baseline gap-1.5 mt-1">
-                  <span className="text-lg font-bold text-purple-400">{consoleMetric.torque}Nm</span>
-                  <span className="text-[10px] text-neutral-400 font-normal">Closed-loop</span>
-                </div>
-              </div>
+            <div className="mt-6">
+              <AnalyticsDashboard />
             </div>
 
           </div>
@@ -1153,7 +1129,7 @@ export default function Home() {
             <div className="flex items-center justify-between border-b border-neutral-900 pb-4 mb-4">
               <div className="flex items-center gap-2">
                 <div className="h-2.5 w-2.5 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-xs font-mono font-bold uppercase text-neutral-300">2D Spatial Computing Arena</span>
+                <span className="text-xs font-mono font-bold uppercase text-neutral-300">3D Spatial Computing Arena</span>
               </div>
               <div className="flex items-center gap-3">
                 <button 
@@ -1181,7 +1157,7 @@ export default function Home() {
 
             {/* Sandbox Canvas Element */}
             <div className="w-full bg-[#0c0a09] rounded-xl border border-neutral-900/70 overflow-hidden select-none cursor-crosshair">
-              <canvas ref={sandboxCanvasRef} className="block w-full h-[300px]" />
+              <ThreeSandbox />
             </div>
           </div>
 
@@ -1244,6 +1220,20 @@ export default function Home() {
 
         </div>
 
+      </section>
+
+      {/* --- SECTION 3.5: ARCHITECTURE PIPELINE BUILDER --- */}
+      <section id="architecture" className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-neutral-900 z-10">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-cyan-500 mb-3">System Architecture</h2>
+          <p className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            Design Agent Cognitive Pipelines
+          </p>
+          <p className="text-neutral-400 mt-4 max-w-xl mx-auto">
+            Drag and drop multi-modal perception nodes, neural planners, and actuator outputs to construct bespoke embodied workflows.
+          </p>
+        </div>
+        <PipelineBuilder />
       </section>
 
       {/* --- SECTION 4: API SDK SNIPPET SECTION --- */}
