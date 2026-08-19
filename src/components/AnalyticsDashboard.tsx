@@ -8,8 +8,8 @@ export function AnalyticsDashboard() {
   const [data, setData] = useState(
     Array.from({ length: 20 }).map((_, i) => ({
       time: i,
-      latency: 40 + Math.random() * 20,
-      cpu: 30 + Math.random() * 40,
+      latency: 40 + (i % 5) * 4,
+      cpu: 30 + (i % 7) * 5,
     }))
   );
 

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import { 
   Cpu, Layers, Eye, Zap, Terminal as TerminalIcon, 
   Sliders, Code, ChevronRight, RefreshCw, Compass, 
@@ -78,7 +79,7 @@ export default function Home() {
     setLogs((prev) => [...prev.slice(-9), `[${timestamp}] ${message}`]);
   };
   const [isLidarScanning, setIsLidarScanning] = useState(false);
-  const [consoleMetric, setConsoleMetric] = useState({
+  const [, setConsoleMetric] = useState({
     cpu: 34,
     confidence: 98.4,
     latency: 3.4,
@@ -706,9 +707,11 @@ export default function Home() {
             {/* Logo */}
             <div className="flex items-center gap-2">
               <div className="h-9 w-9 rounded-full overflow-hidden border border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.4)] flex items-center justify-center">
-                <img 
+                <Image
                   src="/embodystar_avatar.jpg" 
                   alt="embodystar logo" 
+                  width={36}
+                  height={36}
                   className="h-full w-full object-cover"
                 />
               </div>
@@ -922,10 +925,12 @@ export default function Home() {
                 
                 {/* Main Logo Image */}
                 <div className="relative h-56 w-56 rounded-full overflow-hidden border border-cyan-400/40 shadow-[0_0_40px_rgba(6,182,212,0.5)]">
-                  <img 
+                  <Image
                     src="/embodystar_square.jpg" 
                     alt="Embodystar Core" 
-                    className="h-full w-full object-cover scale-105 group-hover:scale-110 transition-transform duration-700"
+                    width={224}
+                    height={224}
+                    className="h-full w-full object-cover scale-105 animate-[spin_24s_linear_infinite] group-hover:scale-110 transition-transform duration-700"
                   />
                 </div>
                 
@@ -1524,7 +1529,7 @@ export default function Home() {
         <footer className="mt-20 pt-10 border-t border-neutral-900 flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-neutral-500">
           <div className="flex items-center gap-2">
             <div className="h-7 w-7 rounded-full overflow-hidden border border-cyan-500/40 shadow-sm flex items-center justify-center">
-              <img src="/embodystar_avatar.jpg" alt="Logo" className="h-full w-full object-cover" />
+              <Image src="/embodystar_avatar.jpg" alt="Logo" width={28} height={28} className="h-full w-full object-cover" />
             </div>
             <span className="font-bold text-neutral-300">embodystar</span>
             <span className="text-xs text-neutral-600">| {t("footer_rights")}</span>

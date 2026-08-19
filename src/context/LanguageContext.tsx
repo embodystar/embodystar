@@ -391,7 +391,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const savedLanguage = localStorage.getItem("embodystar_language") as Language;
     if (savedLanguage && (savedLanguage === "en" || savedLanguage === "es" || savedLanguage === "zh")) {
-      setLanguage(savedLanguage);
+      const timeoutId = window.setTimeout(() => setLanguage(savedLanguage), 0);
+      return () => window.clearTimeout(timeoutId);
     }
   }, []);
 
