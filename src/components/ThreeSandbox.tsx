@@ -2,7 +2,7 @@
 
 import React, { useRef, useMemo, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Box, Sphere, Grid, Environment } from "@react-three/drei";
+import { OrbitControls, Box, Sphere, Grid } from "@react-three/drei";
 import * as THREE from "three";
 
 function Agent({ startPosition, targetPosition, color }: { startPosition: [number, number, number], targetPosition: [number, number, number], color: string }) {
@@ -91,7 +91,6 @@ export function ThreeSandbox() {
         <Agent startPosition={[-6, 0.5, 0]} targetPosition={targetPos} color="#3b82f6" />
         
         <OrbitControls makeDefault minPolarAngle={0} maxPolarAngle={Math.PI / 2 - 0.1} />
-        <Environment preset="night" />
       </Canvas>
     </div>
   );

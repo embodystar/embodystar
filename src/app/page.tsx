@@ -10,6 +10,7 @@ import {
 import { ThreeSandbox } from "../components/ThreeSandbox";
 import { AnalyticsDashboard } from "../components/AnalyticsDashboard";
 import { PipelineBuilder } from "../components/PipelineBuilder";
+import { EmbodystarPlanet } from "../components/EmbodystarPlanet";
 import { useTranslation } from "../context/LanguageContext";
 
 // --- Types ---
@@ -920,14 +921,8 @@ export default function Home() {
                 <div className="absolute inset-10 rounded-full bg-cyan-500/10 blur-xl group-hover:bg-cyan-500/15 transition-all duration-700" />
                 <div className="absolute inset-14 rounded-full bg-fuchsia-500/10 blur-xl group-hover:bg-fuchsia-500/15 transition-all duration-700" />
                 
-                {/* Main Logo Image */}
-                <div className="relative h-56 w-56 rounded-full overflow-hidden border border-cyan-400/40 shadow-[0_0_40px_rgba(6,182,212,0.5)]">
-                  <img 
-                    src="/embodystar_square.jpg" 
-                    alt="Embodystar Core" 
-                    className="h-full w-full object-cover scale-105 group-hover:scale-110 transition-transform duration-700"
-                  />
-                </div>
+                {/* Main Logo Planet */}
+                <EmbodystarPlanet />
                 
                 {/* Floating telemetry labels */}
                 <div className="absolute top-2 left-2 text-[9px] font-mono font-bold text-cyan-400 bg-neutral-950/90 px-2 py-0.5 rounded border border-cyan-500/35 shadow-md">
