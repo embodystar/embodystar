@@ -50,7 +50,7 @@ export default function Home() {
   const { language, setLanguage, t } = useTranslation();
   
   // --- Navigation & UI State ---
-  const [activeTab, setActiveTab] = useState<"python" | "typescript">("python");
+  const [activeTab, setActiveTab] = useState<"python" | "typescript" | "rust">("python");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // --- Terminal Logs State ---
@@ -1345,6 +1345,16 @@ export default function Home() {
                 >
                   {t("sdk_typescript")}
                 </button>
+                <button 
+                  onClick={() => setActiveTab("rust")} 
+                  className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-all ${
+                    activeTab === "rust" 
+                      ? "bg-cyan-600/10 text-cyan-400 border border-cyan-500/25" 
+                      : "text-neutral-500 hover:text-neutral-300"
+                  }`}
+                >
+                  {t("sdk_rust")}
+                </button>
               </div>
 
               {/* Terminal buttons */}
@@ -1378,7 +1388,7 @@ export default function Home() {
                   status = agent.get_telemetry()<br />
                   <span className="text-indigo-400">print</span>(<span className="text-emerald-400">f&quot;Grasp force: </span><span className="text-indigo-400">&#123;</span>status.tactile.force_newtons<span className="text-indigo-400">&#125;</span><span className="text-emerald-400">N | Path confidence: </span><span className="text-indigo-400">&#123;</span>status.planner.confidence<span className="text-indigo-400">&#125;</span><span className="text-emerald-400">%&quot;</span>)
                 </div>
-              ) : (
+              ) : activeTab === "typescript" ? (
                 <div>
                   <span className="text-indigo-400">import</span> &#123; EmbodiedAgent, CoordinateSystem &#125; <span className="text-indigo-400">from</span> <span className="text-emerald-400">&apos;embodystar&apos;</span>;<br /><br />
                   <span className="text-neutral-500">{"// 1. Instantiating our physical agent supervisor"}</span><br />
@@ -1401,6 +1411,26 @@ export default function Home() {
                   &nbsp;&nbsp;&nbsp;&nbsp;console.warn(<span className="text-emerald-400">{"`Rerouting! Detected dynamic obstacle: ${obstacle.id}`"}</span>);<br />
                   &nbsp;&nbsp;&#125;<br />
                   &#125;);
+                </div>
+              ) : (
+                <div>
+                  <span className="text-indigo-400">use</span> embodystar::&#123;CoordinateSystem, EmbodiedAgent, NavigationOptions&#125;;<br /><br />
+                  <span className="text-neutral-500">{"// 1. Connect a physical agent to the embodied runtime"}</span><br />
+                  <span className="text-indigo-400">let</span> agent = EmbodiedAgent::connect(<span className="text-emerald-400">&quot;agent-swarm-node-12&quot;</span>).<span className="text-indigo-400">await</span>?;<br />
+                  agent.set_autonomy_level(<span className="text-emerald-400">&quot;dynamic-cooperative&quot;</span>).<span className="text-indigo-400">await</span>?;<br /><br />
+                  <span className="text-neutral-500">{"// 2. Stream spatial perception updates from the lidar array"}</span><br />
+                  <span className="text-indigo-400">let mut</span> perception = agent.perception_stream().<span className="text-indigo-400">await</span>?;<br />
+                  <span className="text-indigo-400">while let Some</span>(point_cloud) = perception.next().<span className="text-indigo-400">await</span> &#123;<br />
+                  &nbsp;&nbsp;println!(<span className="text-emerald-400">&quot;[Perception] Active resolution: &#123;&#125; pts/m³&quot;</span>, point_cloud.density());<br />
+                  &#125;<br /><br />
+                  <span className="text-neutral-500">{"// 3. Navigate with a real-time obstacle avoidance policy"}</span><br />
+                  <span className="text-indigo-400">let</span> target = CoordinateSystem::new(<span className="text-purple-400">12.5</span>, <span className="text-purple-400">-4.2</span>, <span className="text-purple-400">0.0</span>);<br />
+                  <span className="text-indigo-400">let</span> options = NavigationOptions &#123;<br />
+                  &nbsp;&nbsp;obstacle_avoidance_buffer_cm: <span className="text-purple-400">30</span>,<br />
+                  &nbsp;&nbsp;speed_limit_meters_per_sec: <span className="text-purple-400">1.5</span>,<br />
+                  &nbsp;&nbsp;..Default::default()<br />
+                  &#125;;<br />
+                  agent.navigate_to(target, options).<span className="text-indigo-400">await</span>?;
                 </div>
               )}
             </div>

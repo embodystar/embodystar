@@ -61,6 +61,7 @@ export type TranslationKeys =
   | "sdk_desc"
   | "sdk_python"
   | "sdk_typescript"
+  | "sdk_rust"
   | "connect_title"
   | "connect_desc"
   | "connect_tab_join"
@@ -154,6 +155,7 @@ const translations: Record<Language, Record<TranslationKeys, string>> = {
     sdk_desc: "Write high-level sensory and movement directives in language ecosystems you already know. The underlying runtime translates these commands to real-time industrial actuator trajectories.",
     sdk_python: "Python SDK",
     sdk_typescript: "TypeScript SDK",
+    sdk_rust: "Rust SDK",
     
     connect_title: "Initiate Coordination",
     connect_desc: "Join the distributed network of spatial intelligence nodes. Enter your credentials or run our installer scripts to begin.",
@@ -248,6 +250,7 @@ const translations: Record<Language, Record<TranslationKeys, string>> = {
     sdk_desc: "Escriba directivas de movimiento y sensoriales de alto nivel en ecosistemas de lenguajes que ya conoce. El tiempo de ejecución subyacente traduce estos comandos en trayectorias de actuadores industriales en tiempo real.",
     sdk_python: "Python SDK",
     sdk_typescript: "TypeScript SDK",
+    sdk_rust: "Rust SDK",
     
     connect_title: "Iniciar Coordinación",
     connect_desc: "Únase a la red distribuida de nodos de inteligencia espacial. Ingrese sus credenciales o ejecute nuestros scripts de instalación para comenzar.",
@@ -342,6 +345,7 @@ const translations: Record<Language, Record<TranslationKeys, string>> = {
     sdk_desc: "在您已熟知的语言生态中编写高级感知和运动指令。底层的运行引擎将这些命令实时转化为工业执行器的运动轨迹。",
     sdk_python: "Python SDK",
     sdk_typescript: "TypeScript SDK",
+    sdk_rust: "Rust SDK",
     
     connect_title: "启动网络协同",
     connect_desc: "加入分布式的空间智能节点网络。输入您的凭证或运行我们的安装脚本以开始。",
