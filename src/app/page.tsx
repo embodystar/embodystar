@@ -1380,7 +1380,7 @@ export default function Home() {
                 </div>
               ) : (
                 <div>
-                  <span className="text-indigo-400">import</span> &#123; EmbodiedAgent, CoordinateSystem &#125; <span className="text-indigo-400">from</span> <span className="text-emerald-400">&apos;embodystar-sdk&apos;</span>;<br /><br />
+                  <span className="text-indigo-400">import</span> &#123; EmbodiedAgent, CoordinateSystem &#125; <span className="text-indigo-400">from</span> <span className="text-emerald-400">&apos;embodystar&apos;</span>;<br /><br />
                   <span className="text-neutral-500">{"// 1. Instantiating our physical agent supervisor"}</span><br />
                   <span className="text-indigo-400">const</span> agent = <span className="text-indigo-400">new</span> EmbodiedAgent(&#123;<br />
                   &nbsp;&nbsp;agentId: <span className="text-emerald-400">&apos;agent-swarm-node-12&apos;</span>,<br />
