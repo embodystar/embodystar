@@ -1,0 +1,42 @@
+[
+ {
+  "mode": "redesign",
+  "depth": "full",
+  "scope": "app",
+  "shape": "app screen",
+  "theme": "almanac",
+  "axes": "mid/grotesk-sans/chromatic-magenta",
+  "hero": "none, app screen",
+  "nav": "kept sidebar",
+  "footer": "compact resource footer",
+  "imagery": "none, real resource index",
+  "photos": [],
+  "entry": "search",
+  "fingerprint": {
+   "material": "words",
+   "surface": "slate",
+   "navigation": "sidebar",
+   "primary": "resource index",
+   "sections": "featured resource and index",
+   "action": "find and save"
+  },
+  "sections": [
+   "search",
+   "featured resource and subjects",
+   "resource index",
+   "local collection",
+   "footer"
+  ],
+  "signature": "robotics resource index",
+  "waived": [],
+  "prompt": "EmbodyStar embodied AI resource portal using Hallmark",
+  "verification": {
+   "floor": 0,
+   "reflex": 0,
+   "warn": 0,
+   "build": "pass",
+   "interaction": "pass"
+  },
+  "date": "2026-11-05"
+ }
+]

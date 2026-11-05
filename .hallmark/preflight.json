@@ -1,0 +1,22 @@
+{
+  "scanned": "2026-11-05",
+  "findings": {
+    "framework": "Next.js 16.4.3, React 19.3.0 (package.json:12)",
+    "fonts": "Arial fallback (previous app/globals.css:25); no locked brand font",
+    "palette": "Purple and light grey starter styling (previous app/globals.css:3)",
+    "motion": "CSS hover transitions; no motion library",
+    "scope": "Existing resource portal at app/page.tsx, app screen"
+  },
+  "preserve": [
+    "EmbodyStar wordmark",
+    "all resource facts and external URLs",
+    "search, category filters, sort, saved resources and local additions",
+    "static prerendering fix"
+  ],
+  "introduce": [
+    "Almanac theme",
+    "locally hosted Hanken Grotesk",
+    "readable resource index",
+    "tokens and base styles"
+  ]
+}
