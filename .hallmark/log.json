@@ -1,42 +1,74 @@
 [
- {
-  "mode": "redesign",
-  "depth": "full",
-  "scope": "app",
-  "shape": "app screen",
-  "theme": "almanac",
-  "axes": "mid/grotesk-sans/chromatic-magenta",
-  "hero": "none, app screen",
-  "nav": "kept sidebar",
-  "footer": "compact resource footer",
-  "imagery": "none, real resource index",
-  "photos": [],
-  "entry": "search",
-  "fingerprint": {
-   "material": "words",
-   "surface": "slate",
-   "navigation": "sidebar",
-   "primary": "resource index",
-   "sections": "featured resource and index",
-   "action": "find and save"
+  {
+    "mode": "redesign",
+    "scope": "app",
+    "depth": "full",
+    "theme": "EmbodyStar forest",
+    "prompt": "User requested a more beautiful portal after rejecting the slate Almanac design",
+    "signature": "Real robotics imagery with a welcoming resource discovery grid",
+    "axes": "light/sans/forest-green",
+    "sections": [
+      "search",
+      "LeRobot feature",
+      "subjects",
+      "resource cards",
+      "local collection"
+    ],
+    "verification": {
+      "build": "pass",
+      "lint": "pass",
+      "typescript": "pass",
+      "browser_interactions": "pass",
+      "viewport_widths": [
+        320,
+        375,
+        414,
+        768,
+        1024,
+        1280,
+        1440,
+        1920
+      ]
+    }
   },
-  "sections": [
-   "search",
-   "featured resource and subjects",
-   "resource index",
-   "local collection",
-   "footer"
-  ],
-  "signature": "robotics resource index",
-  "waived": [],
-  "prompt": "EmbodyStar embodied AI resource portal using Hallmark",
-  "verification": {
-   "floor": 0,
-   "reflex": 0,
-   "warn": 0,
-   "build": "pass",
-   "interaction": "pass"
-  },
-  "date": "2026-11-05"
- }
+  {
+    "mode": "redesign",
+    "depth": "full",
+    "scope": "app",
+    "shape": "app screen",
+    "theme": "almanac",
+    "axes": "mid/grotesk-sans/chromatic-magenta",
+    "hero": "none, app screen",
+    "nav": "kept sidebar",
+    "footer": "compact resource footer",
+    "imagery": "none, real resource index",
+    "photos": [],
+    "entry": "search",
+    "fingerprint": {
+      "material": "words",
+      "surface": "slate",
+      "navigation": "sidebar",
+      "primary": "resource index",
+      "sections": "featured resource and index",
+      "action": "find and save"
+    },
+    "sections": [
+      "search",
+      "featured resource and subjects",
+      "resource index",
+      "local collection",
+      "footer"
+    ],
+    "signature": "robotics resource index",
+    "waived": [],
+    "prompt": "EmbodyStar embodied AI resource portal using Hallmark",
+    "verification": {
+      "floor": 0,
+      "reflex": 0,
+      "warn": 0,
+      "build": "pass",
+      "interaction": "pass"
+    },
+    "date": "2026-11-05"
+  }
 ]

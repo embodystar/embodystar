@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 type Kind = "Models" | "Datasets" | "Simulation" | "Research" | "Tools";
@@ -71,35 +72,38 @@ export default function Home() {
         </header>
         <main>
           <div className="page-heading">
-            <h1>{active === "Discover" ? "A field guide to embodied AI." : active === "Saved resources" ? "Your reference shelf." : active === "All resources" ? "The resource index." : active === "Simulation" ? "Simulators." : active === "Research" ? "Research papers." : `${active}.`}</h1>
-            <p>{active === "Discover" ? "Models, datasets, and tools for building intelligence that acts." : active === "Saved resources" ? "Your bookmarked resources, kept on this device." : "Find the next building block for your robotics project."}</p>
+            <h1>{active === "Discover" ? "Discover embodied intelligence." : active === "Saved resources" ? "Your reference shelf." : active === "All resources" ? "The resource index." : active === "Simulation" ? "Simulators." : active === "Research" ? "Research papers." : `${active}.`}</h1>
+            <p>{active === "Discover" ? "The ideas, models, and tools bringing intelligence into the real world." : active === "Saved resources" ? "Your bookmarked resources, kept on this device." : "Find the next building block for your robotics project."}</p>
           </div>
           <div className="search-bar">
             <Icon name="search" size={21} />
             <input ref={search} value={query} onChange={e => setQuery(e.target.value)} placeholder="Search the index…" aria-label="Search resources" />
             <button className="search-shortcut" onClick={() => { if (query) setQuery(""); else search.current?.focus(); }} aria-label={query ? "Clear search" : "Focus search"}>{query ? <Icon name="close" size={16} /> : <><span>⌘</span>K</>}</button>
           </div>
-          {discovery && <section className="discovery-panel" aria-label="Featured resource and subjects">
-            <div className="featured-resource">
-              <div className="feature-heading"><h2>LeRobot</h2><span>Hugging Face</span></div>
-              <p>{resources[0].description}</p>
-              <div className="feature-actions"><button className="primary-button" onClick={() => setSelected(resources[0])}>Explore LeRobot<Icon name="external" size={16} /></button><button className="text-button" onClick={() => { navigate("All resources"); document.getElementById("resource-section")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>Browse the index</button></div>
-              <span className="feature-caption">Featured in models / Imitation learning / PyTorch</span>
-            </div>
-            <div className="subject-index">
-              {categories.map(c => <button key={c.name} onClick={() => navigate(c.name)}><span>{c.name === "Simulation" ? "Simulators" : c.name === "Research" ? "Research papers" : c.name}</span><span className="subject-count">{all.filter(r => r.kind === c.name).length}</span><Icon name="arrow" size={16} /></button>)}
-              <p>A starting point for research and practice.</p>
-            </div>
-          </section>}
+          {discovery && <>
+            <section className="discovery-panel" aria-label="Featured resource">
+              <div className="featured-resource">
+                <h2>Great ideas.<br />Real-world possibilities.</h2>
+                <p>Meet LeRobot. Open models, datasets, and tools to take your next robotics project further.</p>
+                <div className="feature-actions"><button className="primary-button" onClick={() => setSelected(resources[0])}>Explore LeRobot<Icon name="arrow" size={17} /></button><button className="text-button" onClick={() => { navigate("All resources"); document.getElementById("resource-section")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>Browse resources</button></div>
+                <span className="feature-caption">From the open-source community at Hugging Face</span>
+              </div>
+              <div className="feature-image"><Image src="/images/lerobot-arm.jpg" alt="Two turquoise LeRobot arms learning a manipulation task" width={640} height={352} unoptimized preload /><div className="feature-image-caption"><span>From learning to doing.</span><Icon name="orbit" size={22} /></div></div>
+            </section>
+            <section className="subject-index" aria-label="Browse by subject">
+              {categories.map(c => <button key={c.name} onClick={() => navigate(c.name)}><Icon name={c.icon} size={23} /><span>{c.name === "Simulation" ? "Simulators" : c.name === "Research" ? "Research papers" : c.name}<small>{c.description}</small></span><Icon name="arrow" size={15} /></button>)}
+            </section>
+          </>}
           <section id="resource-section" className="resource-section" aria-labelledby="resource-heading">
-            <div className="section-title-row"><h2 id="resource-heading">{query ? "Search results" : active === "Saved resources" ? "Saved resources" : "Resource index"}<span className="result-count">{visible.length}</span></h2><label className="sort-control"><span>Sort by</span><select value={sort} onChange={e => setSort(e.target.value)} aria-label="Sort resources"><option>Featured</option><option>A to Z</option></select></label></div>
+            <div className="section-title-row"><h2 id="resource-heading">{query ? "Search results" : active === "Saved resources" ? "Saved resources" : "Find your next building block"}<span className="result-count">{visible.length}</span></h2><label className="sort-control"><span>Sort by</span><select value={sort} onChange={e => setSort(e.target.value)} aria-label="Sort resources"><option>Featured</option><option>A to Z</option></select></label></div>
             <div className="filter-row" aria-label="Resource categories">
               {["All", "Models", "Datasets", "Simulation", "Research", "Tools"].map(f => <button key={f} aria-pressed={f === "All" ? ["Discover", "All resources", "Saved resources"].includes(active) : active === f} className={(f === "All" ? ["Discover", "All resources", "Saved resources"].includes(active) : active === f) ? "filter active" : "filter"} onClick={() => { setActive(f === "All" ? active === "Saved resources" ? active : "All resources" : f); }}>{f === "Simulation" ? "Simulators" : f === "Research" ? "Papers" : f === "All" ? "All resources" : f}</button>)}
             </div>
             {notice && <div className="notice" role="status">{notice}<button className="icon-button" onClick={() => setNotice("")} aria-label="Dismiss notification"><Icon name="close" size={16} /></button></div>}
             {visible.length ? <div className="resource-list">
               <div className="resource-list-head" aria-hidden="true"><span>Resource / Description</span><span>Category</span><span>Maintainer</span><span>Save</span></div>
-              {visible.map(r => <article className="resource-row" key={r.id}>
+              {visible.map(r => <article className={`resource-row resource-${r.art}`} key={r.id}>
+                <div className="resource-symbol" aria-hidden="true"><Icon name={r.kind === "Models" ? "cube" : r.kind === "Datasets" ? "layers" : r.kind === "Simulation" ? "orbit" : r.kind === "Research" ? "paper" : "tools"} size={25} /></div>
                 <div className="resource-info"><button className="resource-title" onClick={() => setSelected(r)}><h3>{r.title}</h3><Icon name="external" size={15} /></button><p>{r.description}</p><div className="resource-tags">{r.tags.map(tag => <span key={tag}>{tag}</span>)}</div></div>
                 <span className="resource-kind">{r.kind === "Simulation" ? "Simulator" : r.kind === "Research" ? "Paper" : r.kind === "Models" ? "Model" : r.kind === "Datasets" ? "Dataset" : "Tool"}</span>
                 <span className="resource-org">{r.org}</span>
@@ -108,7 +112,7 @@ export default function Home() {
             </div> : <div className="empty-state"><Icon name={active === "Saved resources" ? "bookmark" : "search"} size={28} /><h3>{active === "Saved resources" && !query ? "Your shelf is empty." : "No resources found."}</h3><p>{active === "Saved resources" && !query ? "Bookmark a resource to find it here later." : "Try another search or explore all resources."}</p><button className="secondary-button" onClick={() => navigate("All resources")}>Explore all resources</button></div>}
           </section>
           <section className="collection-note"><div><h2>Keep your own reference shelf.</h2><p>Add a useful tool, paper, or project. It stays in this browser.</p></div><button className="secondary-button" onClick={() => setSubmitOpen(true)}><Icon name="plus" size={17} />Add a resource</button></section>
-          <footer className="footer"><span>© {copyrightYear !== null && `${copyrightYear} `}EmbodyStar</span><span>Independent resources. Connected ideas.</span><a href="https://github.com/topics/embodied-ai" target="_blank" rel="noreferrer">Explore on GitHub<Icon name="external" size={13} /></a></footer>
+          <footer className="footer"><span>© {copyrightYear !== null && `${copyrightYear} `}EmbodyStar</span><a className="image-credit" href="https://github.com/huggingface/lerobot" target="_blank" rel="noreferrer">Robotics imagery by LeRobot / Hugging Face</a><a href="https://github.com/topics/embodied-ai" target="_blank" rel="noreferrer">Explore on GitHub<Icon name="external" size={13} /></a></footer>
         </main>
       </div>
       <dialog ref={dialog} onCancel={close} onClose={close} onClick={e => { if (e.target === e.currentTarget) close(); }}>
