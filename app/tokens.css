@@ -1,21 +1,21 @@
 :root {
   color-scheme: light;
-  --color-paper: #f8f9f7;
+  --color-paper: #f7f7ef;
   --color-paper-2: #f0f2ee;
   --color-paper-3: #e5ebe5;
   --color-sheet: #ffffff;
-  --color-ink: #202f2b;
+  --color-ink: #293b2c;
   --color-ink-2: #344b43;
   --color-muted: #68786f;
-  --color-rule: #e3e9e2;
-  --color-rule-2: #c7d2c8;
+  --color-rule: #e3e6d8;
+  --color-rule-2: #d4dbca;
   --color-accent: #246b50;
   --color-accent-2: #174c39;
   --color-accent-ink: #ffffff;
   --color-focus: #246b50;
   --color-success: #246b50;
   --color-overlay: #142b2566;
-  --color-feature: #173e35;
+  --color-feature: #1e3d30;
   --color-feature-ink: #f7f9ef;
   --color-feature-muted: #c0d1c5;
   --color-lime: #e0eb9c;

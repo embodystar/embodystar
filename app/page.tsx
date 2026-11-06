@@ -2,115 +2,131 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { ProductArt } from "./components/product-art";
+import { cartTotals, categories, formatPrice, products, restoreCart, updateCart, type CartItem, type Category, type Product } from "../lib/catalog";
 
-import { resources, type Kind, type Resource } from "../lib/resources";
+type View = "product" | "cart" | "checkout" | "confirmation" | "about" | null;
+type Sort = "Featured" | "Price: low to high" | "Price: high to low" | "Name: A–Z";
+const STORAGE_KEY = "embodystar-shop-v1";
 
-const categories: { name: Kind; icon: string; description: string }[] = [{ name: "Models", icon: "cube", description: "Intelligence in action" }, { name: "Datasets", icon: "layers", description: "Data for discovery" }, { name: "Simulation", icon: "orbit", description: "Build virtual worlds" }, { name: "Research", icon: "paper", description: "Ideas moving us forward" }];
-function Icon({ name, size = 20 }: { name: string; size?: number }) { return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{name === "search" ? <><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 4 4" /></> : name === "bookmark" ? <path d="M6 4h12v17l-6-4-6 4V4Z" /> : name === "grid" ? <><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></> : name === "cube" ? <><path d="m12 2 9 5v10l-9 5-9-5V7l9-5Zm0 10L3 7m9 5 9-5m-9 5v10M7 4.8l10 5.5" /></> : name === "layers" ? <><path d="m12 3 10 5-10 5L2 8l10-5Zm-10 9 10 5 10-5M2 16l10 5 10-5" /></> : name === "orbit" ? <><circle cx="12" cy="12" r="3" /><ellipse cx="12" cy="12" rx="11" ry="5" transform="rotate(-40 12 12)" /><path d="M7 3a10 10 0 0 1 12 15M5 20A10 10 0 0 1 4 6" /></> : name === "paper" ? <><path d="M5 3h10l4 4v14H5V3Zm10 0v5h4M9 12h6m-6 4h6" /></> : name === "tools" ? <><path d="m8 6-6 6 6 6m8-12 6 6-6 6M14 3l-4 18" /></> : name === "arrow" ? <path d="M5 12h14m-5-5 5 5-5 5" /> : name === "external" ? <><path d="M14 4h6v6m0-6L10 14M10 4H4v16h16v-6" /></> : name === "plus" ? <path d="M12 5v14M5 12h14" /> : name === "close" ? <path d="m6 6 12 12M6 18 18 6" /> : name === "menu" ? <path d="M4 6h16M4 12h16M4 18h16" /> : <><circle cx="12" cy="12" r="9" /><path d="m9 15 2-6 4 2-2 4-4 0Z" /></>}</svg>; }
-function Star({ className = "" }: { className?: string }) { return <svg className={className} viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="m20 2 4.5 13.5L38 20l-13.5 4.5L20 38l-4.5-13.5L2 20l13.5-4.5L20 2Z" fill="currentColor" /><path d="m31 4 1.3 3.7L36 9l-3.7 1.3L31 14l-1.3-3.7L26 9l3.7-1.3L31 4Z" fill="currentColor" /></svg>; }
+function Icon({ name, size = 20 }: { name: "search" | "bag" | "arrow" | "heart" | "close" | "plus" | "minus" | "check" | "package" | "spark"; size?: number }) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{name === "search" ? <><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 4.5 4.5" /></> : name === "bag" ? <><path d="M5 7h14l1 14H4L5 7Z" /><path d="M8 8V6a4 4 0 0 1 8 0v2" /></> : name === "arrow" ? <path d="M4 12h16m-6-6 6 6-6 6" /> : name === "heart" ? <path d="M20 5c-3-3-6-1-8 1-2-2-5-4-8-1-3 3 0 7 2 9l6 6 6-6c2-2 5-6 2-9Z" /> : name === "close" ? <path d="m6 6 12 12M6 18 18 6" /> : name === "plus" ? <path d="M12 5v14M5 12h14" /> : name === "minus" ? <path d="M5 12h14" /> : name === "check" ? <path d="m5 12 4 4L19 6" /> : name === "package" ? <><path d="m3 7 9-4 9 4v11l-9 4-9-4V7Zm0 0 9 4 9-4m-9 4v11M7.5 5l9 4v4" /></> : <path d="m12 2 2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5L12 2Z" />}</svg>;
+}
+
 export default function Home() {
-  const [active, setActive] = useState("Discover");
+  const [category, setCategory] = useState<Category | "All products">("All products");
   const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<Sort>("Featured");
+  const [newOnly, setNewOnly] = useState(false);
+  const [savedOnly, setSavedOnly] = useState(false);
   const [saved, setSaved] = useState<string[]>([]);
-  const [custom, setCustom] = useState<Resource[]>([]);
+  const [cart, setCart] = useState<CartItem[]>([]);
   const [ready, setReady] = useState(false);
-  const [copyrightYear, setCopyrightYear] = useState<number | null>(null);
-  const [selected, setSelected] = useState<Resource | null>(null);
-  const [submitOpen, setSubmitOpen] = useState(false);
-  const [mobileMenu, setMobileMenu] = useState(false);
-  const [sort, setSort] = useState("Featured");
+  const [view, setView] = useState<View>(null);
+  const [selected, setSelected] = useState<Product>(products[0]);
+  const [productQuantity, setProductQuantity] = useState(1);
   const [notice, setNotice] = useState("");
-  const search = useRef<HTMLInputElement>(null);
+  const [storageNotice, setStorageNotice] = useState("");
+  const [receiptTotal, setReceiptTotal] = useState(0);
   const dialog = useRef<HTMLDialogElement>(null);
-  useEffect(() => { const frame = requestAnimationFrame(() => { setCopyrightYear(new Date().getFullYear()); try { const storedSaved: unknown = JSON.parse(localStorage.getItem("embodystar-saved") || "[]"); const storedCustom: unknown = JSON.parse(localStorage.getItem("embodystar-resources") || "[]"); if (Array.isArray(storedSaved)) setSaved(storedSaved.filter((id): id is string => typeof id === "string")); if (Array.isArray(storedCustom)) setCustom(storedCustom.filter((r): r is Resource => r && typeof r.id === "string" && typeof r.title === "string" && typeof r.description === "string" && Array.isArray(r.tags) && /^https?:\/\//.test(r.url))); } catch {} setReady(true); }); return () => cancelAnimationFrame(frame); }, []);
-  useEffect(() => { if (ready) { try { localStorage.setItem("embodystar-saved", JSON.stringify(saved)); localStorage.setItem("embodystar-resources", JSON.stringify(custom)); } catch { /* The portal remains usable when browser storage is unavailable. */ } } }, [saved, custom, ready]);
-  useEffect(() => { const shortcut = (e: KeyboardEvent) => { if ((e.metaKey || e.ctrlKey) && e.key === "k") { e.preventDefault(); search.current?.focus(); } }; window.addEventListener("keydown", shortcut); return () => window.removeEventListener("keydown", shortcut); }, []);
-  useEffect(() => { if (selected || submitOpen) dialog.current?.showModal(); else dialog.current?.close(); }, [selected, submitOpen]);
-  function close() { setSelected(null); setSubmitOpen(false); }
-  function navigate(name: string) { setActive(name); setQuery(""); setMobileMenu(false); }
-  function toggleSave(id: string) { setSaved(previous => previous.includes(id) ? previous.filter(item => item !== id) : [...previous, id]); }
-  const all = [...custom, ...resources];
-  const visible = all.filter(r => (active === "Discover" || active === "All resources" || (active === "Saved resources" ? saved.includes(r.id) : r.kind === active)) && `${r.title} ${r.org} ${r.description} ${r.tags.join(" ")}`.toLowerCase().includes(query.toLowerCase())).sort((a, b) => sort === "A to Z" ? a.title.localeCompare(b.title) : 0);
-  const discovery = active === "Discover" && !query;
+  const searchInput = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      try {
+        const data: unknown = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "null");
+        if (data && typeof data === "object") {
+          if ("cart" in data) setCart(restoreCart(data.cart));
+          if ("saved" in data && Array.isArray(data.saved)) setSaved(data.saved.filter((id): id is string => typeof id === "string" && products.some((product) => product.id === id)));
+        }
+      } catch { setStorageNotice("Browser storage is unavailable. Your bag will stay for this visit."); }
+      setReady(true);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  useEffect(() => {
+    if (!ready) return;
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ cart, saved })); }
+    catch { /* The current session remains usable when browser storage is unavailable. */ }
+  }, [cart, saved, ready]);
+
+  useEffect(() => {
+    if (view) {
+      dialog.current?.showModal();
+      const previous = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => { document.body.style.overflow = previous; };
+    }
+    dialog.current?.close();
+  }, [view]);
+
+  useEffect(() => {
+    if (!notice) return;
+    const timeout = setTimeout(() => setNotice(""), 4000);
+    return () => clearTimeout(timeout);
+  }, [notice]);
+
+  const totals = cartTotals(cart);
+  const itemCount = cart.reduce((count, item) => count + item.quantity, 0);
+  const visible = products.filter((product) =>
+    (category === "All products" || product.category === category) &&
+    (!newOnly || product.isNew) && (!savedOnly || saved.includes(product.id)) &&
+    `${product.name} ${product.category} ${product.description}`.toLowerCase().includes(query.toLowerCase())
+  ).sort((a, b) => sort === "Price: low to high" ? a.price - b.price : sort === "Price: high to low" ? b.price - a.price : sort === "Name: A–Z" ? a.name.localeCompare(b.name) : 0);
+  const cartProducts = cart.flatMap((item) => {
+    const product = products.find((product) => product.id === item.productId);
+    return product ? [{ ...item, product }] : [];
+  });
+
+  function shop(nextCategory: Category | "All products" = "All products", arrivals = false) {
+    setCategory(nextCategory); setNewOnly(arrivals); setSavedOnly(false); setQuery("");
+    document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" });
+  }
+  function openProduct(product: Product) { setSelected(product); setProductQuantity(1); setView("product"); }
+  function toggleSaved(id: string) { setSaved((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]); }
+  function addToCart(product: Product, quantity = 1) {
+    const current = cart.find((item) => item.productId === product.id)?.quantity ?? 0;
+    if (current >= product.stock) { setNotice(`All ${product.stock} available ${product.name} units are already in your bag.`); return; }
+    setCart((items) => updateCart(items, product.id, (items.find((item) => item.productId === product.id)?.quantity ?? 0) + quantity));
+    setNotice(`${product.name} added to your bag.`);
+  }
+  function finishDemoOrder() {
+    if (!cart.length) return;
+    setReceiptTotal(totals.total); setCart([]); setView("confirmation");
+  }
+
   return (
-    <div className="portal-shell">
-      <a className="skip-link" href="#resource-section">Skip to resources</a>
-      <aside className={`sidebar ${mobileMenu ? "sidebar-open" : ""}`}>
-        <a className="brand" href="#" onClick={() => navigate("Discover")}>
-          <Star /><span>EmbodyStar<small>The embodied AI index</small></span>
-        </a>
-        <button className="mobile-close icon-button" aria-label="Close navigation" onClick={() => setMobileMenu(false)}><Icon name="close" /></button>
-        <nav aria-label="Main navigation">
-          <button className={active === "Discover" ? "nav-item active" : "nav-item"} aria-current={active === "Discover" ? "page" : undefined} onClick={() => navigate("Discover")}><Icon name="compass" /><span>Discover</span></button>
-          <button className={active === "All resources" ? "nav-item active" : "nav-item"} onClick={() => navigate("All resources")}><Icon name="grid" /><span>All resources</span><span className="nav-count">{all.length}</span></button>
-          <div className="nav-label">Browse by subject</div>
-          {[...categories, { name: "Tools", icon: "tools" }].map(c => (
-            <button key={c.name} className={active === c.name ? "nav-item active" : "nav-item"} onClick={() => navigate(c.name)}><Icon name={c.icon} /><span>{c.name === "Research" ? "Research papers" : c.name === "Simulation" ? "Simulators" : c.name}</span></button>
-          ))}
-          <div className="nav-divider" />
-          <button className={active === "Saved resources" ? "nav-item active" : "nav-item"} onClick={() => navigate("Saved resources")}><Icon name="bookmark" /><span>Saved resources</span><span className="nav-count">{saved.length}</span></button>
-        </nav>
-        <div className="sidebar-bottom">
-          <p>A reference shelf<br />for things that move.</p>
-          <button className="secondary-button" onClick={() => setSubmitOpen(true)}><Icon name="plus" size={17} />Add a resource</button>
-          <small>Saved on this device.</small>
-        </div>
-      </aside>
-      {mobileMenu && <button className="sidebar-overlay" aria-label="Close navigation" onClick={() => setMobileMenu(false)} />}
-      <div className="main-shell">
-        <header className="topbar">
-          <div className="breadcrumb"><button className="mobile-toggle icon-button" aria-label="Open navigation" onClick={() => setMobileMenu(true)}><Icon name="menu" /></button><span>EmbodyStar</span><span aria-hidden="true">/</span><strong>{active}</strong></div>
-          <a className="github-link" href="https://github.com/topics/embodied-ai" target="_blank" rel="noreferrer"><Icon name="tools" size={16} />Community<Icon name="external" size={15} /></a>
-        </header>
-        <main>
-          <div className="page-heading">
-            <h1>{active === "Discover" ? "Discover embodied intelligence." : active === "Saved resources" ? "Your reference shelf." : active === "All resources" ? "The resource index." : active === "Simulation" ? "Simulators." : active === "Research" ? "Research papers." : `${active}.`}</h1>
-            <p>{active === "Discover" ? "The ideas, models, and tools bringing intelligence into the real world." : active === "Saved resources" ? "Your bookmarked resources, kept on this device." : "Find the next building block for your robotics project."}</p>
-          </div>
-          <div className="search-bar">
-            <Icon name="search" size={21} />
-            <input ref={search} value={query} onChange={e => setQuery(e.target.value)} placeholder="Search the index…" aria-label="Search resources" />
-            <button className="search-shortcut" onClick={() => { if (query) setQuery(""); else search.current?.focus(); }} aria-label={query ? "Clear search" : "Focus search"}>{query ? <Icon name="close" size={16} /> : <><span>⌘</span>K</>}</button>
-          </div>
-          {discovery && <>
-            <section className="discovery-panel" aria-label="Featured resource">
-              <div className="featured-resource">
-                <h2>Great ideas.<br />Real-world possibilities.</h2>
-                <p>Meet LeRobot. Open models, datasets, and tools to take your next robotics project further.</p>
-                <div className="feature-actions"><button className="primary-button" onClick={() => setSelected(resources[0])}>Explore LeRobot<Icon name="arrow" size={17} /></button><button className="text-button" onClick={() => { navigate("All resources"); document.getElementById("resource-section")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>Browse resources</button></div>
-                <span className="feature-caption">From the open-source community at Hugging Face</span>
-              </div>
-              <div className="feature-image"><Image src="/images/lerobot-arm.jpg" alt="Two turquoise LeRobot arms learning a manipulation task" width={640} height={352} unoptimized preload /><div className="feature-image-caption"><span>From learning to doing.</span><Icon name="orbit" size={22} /></div></div>
-            </section>
-            <section className="subject-index" aria-label="Browse by subject">
-              {categories.map(c => <button key={c.name} onClick={() => navigate(c.name)}><Icon name={c.icon} size={23} /><span>{c.name === "Simulation" ? "Simulators" : c.name === "Research" ? "Research papers" : c.name}<small>{c.description}</small></span><Icon name="arrow" size={15} /></button>)}
-            </section>
-          </>}
-          <section id="resource-section" className="resource-section" aria-labelledby="resource-heading">
-            <div className="section-title-row"><h2 id="resource-heading">{query ? "Search results" : active === "Saved resources" ? "Saved resources" : "Find your next building block"}<span className="result-count">{visible.length}</span></h2><label className="sort-control"><span>Sort by</span><select value={sort} onChange={e => setSort(e.target.value)} aria-label="Sort resources"><option>Featured</option><option>A to Z</option></select></label></div>
-            <div className="filter-row" aria-label="Resource categories">
-              {["All", "Models", "Datasets", "Simulation", "Research", "Tools"].map(f => <button key={f} aria-pressed={f === "All" ? ["Discover", "All resources", "Saved resources"].includes(active) : active === f} className={(f === "All" ? ["Discover", "All resources", "Saved resources"].includes(active) : active === f) ? "filter active" : "filter"} onClick={() => { setActive(f === "All" ? active === "Saved resources" ? active : "All resources" : f); }}>{f === "Simulation" ? "Simulators" : f === "Research" ? "Papers" : f === "All" ? "All resources" : f}</button>)}
-            </div>
-            {notice && <div className="notice" role="status">{notice}<button className="icon-button" onClick={() => setNotice("")} aria-label="Dismiss notification"><Icon name="close" size={16} /></button></div>}
-            {visible.length ? <div className="resource-list">
-              <div className="resource-list-head" aria-hidden="true"><span>Resource / Description</span><span>Category</span><span>Maintainer</span><span>Save</span></div>
-              {visible.map(r => <article className={`resource-row resource-${r.art}`} key={r.id}>
-                <div className="resource-symbol" aria-hidden="true"><Icon name={r.kind === "Models" ? "cube" : r.kind === "Datasets" ? "layers" : r.kind === "Simulation" ? "orbit" : r.kind === "Research" ? "paper" : "tools"} size={25} /></div>
-                <div className="resource-info"><button className="resource-title" onClick={() => setSelected(r)}><h3>{r.title}</h3><Icon name="external" size={15} /></button><p>{r.description}</p><div className="resource-tags">{r.tags.map(tag => <span key={tag}>{tag}</span>)}</div></div>
-                <span className="resource-kind">{r.kind === "Simulation" ? "Simulator" : r.kind === "Research" ? "Paper" : r.kind === "Models" ? "Model" : r.kind === "Datasets" ? "Dataset" : "Tool"}</span>
-                <span className="resource-org">{r.org}</span>
-                <button className={`save-button icon-button ${saved.includes(r.id) ? "is-saved" : ""}`} onClick={() => toggleSave(r.id)} aria-label={`${saved.includes(r.id) ? "Unsave" : "Save"} ${r.title}`} aria-pressed={saved.includes(r.id)}><Icon name="bookmark" size={19} /></button>
-              </article>)}
-            </div> : <div className="empty-state"><Icon name={active === "Saved resources" ? "bookmark" : "search"} size={28} /><h3>{active === "Saved resources" && !query ? "Your shelf is empty." : "No resources found."}</h3><p>{active === "Saved resources" && !query ? "Bookmark a resource to find it here later." : "Try another search or explore all resources."}</p><button className="secondary-button" onClick={() => navigate("All resources")}>Explore all resources</button></div>}
-          </section>
-          <section className="collection-note"><div><h2>Keep your own reference shelf.</h2><p>Add a useful tool, paper, or project. It stays in this browser.</p></div><button className="secondary-button" onClick={() => setSubmitOpen(true)}><Icon name="plus" size={17} />Add a resource</button></section>
-          <footer className="footer"><span>© {copyrightYear !== null && `${copyrightYear} `}EmbodyStar</span><a className="image-credit" href="https://github.com/huggingface/lerobot" target="_blank" rel="noreferrer">Robotics imagery by LeRobot / Hugging Face</a><a href="https://github.com/topics/embodied-ai" target="_blank" rel="noreferrer">Explore on GitHub<Icon name="external" size={13} /></a></footer>
-        </main>
-      </div>
-      <dialog ref={dialog} onCancel={close} onClose={close} onClick={e => { if (e.target === e.currentTarget) close(); }}>
-        <button className="dialog-close icon-button" onClick={close} aria-label="Close dialog"><Icon name="close" /></button>
-        {selected ? <div className="dialog-content"><h2>{selected.title}</h2><div className="detail-meta"><span>{selected.kind}</span><span>{selected.org}</span></div><p>{selected.description}</p><div className="resource-tags">{selected.tags.map(t => <span key={t}>{t}</span>)}</div><div className="dialog-actions"><a className="primary-button" href={selected.url} target="_blank" rel="noreferrer">Visit resource<Icon name="external" size={16} /></a><button className="secondary-button" onClick={() => toggleSave(selected.id)}><Icon name="bookmark" size={17} />{saved.includes(selected.id) ? "Saved to your collection" : "Save resource"}</button></div></div> : <div className="dialog-content"><h2>Add a resource.</h2><p>Your additions and bookmarks stay on this device.</p><form onSubmit={e => { e.preventDefault(); const data = new FormData(e.currentTarget); const url = String(data.get("url")); const parsed = new URL(url); if (!["https:", "http:"].includes(parsed.protocol)) return; const resource: Resource = { id: crypto.randomUUID(), title: String(data.get("title")), description: String(data.get("description")), kind: data.get("kind") as Kind, org: "Your collection", url, tags: ["Community resource"], art: "tools" }; setCustom(prev => [resource, ...prev]); setSaved(prev => [...prev, resource.id]); navigate("All resources"); setNotice(`${resource.title} was added to your collection.`); close(); }}><label>Resource name<input name="title" required maxLength={70} placeholder="What did you discover?" /></label><label>Website URL<input name="url" type="url" pattern="https?://.*" required placeholder="https://" /></label><label>Category<select name="kind">{["Models", "Datasets", "Simulation", "Research", "Tools"].map(k => <option key={k}>{k}</option>)}</select></label><label>A short introduction<textarea name="description" required rows={3} maxLength={250} placeholder="What makes it useful?" /></label><button className="primary-button" type="submit">Add to my collection<Icon name="plus" size={17} /></button></form></div>}
-      </dialog>
+    <div className="storefront">
+      <a className="skip-link" href="#shop">Skip to products</a>
+      <div className="announcement"><span>A little curiosity. A world of possibility.</span><span className="demo-label">Demo storefront · USD</span></div>
+      <header className="store-header">
+        <a href="#" className="store-brand" aria-label="EmbodyStar home" onClick={() => { setCategory("All products"); setNewOnly(false); setSavedOnly(false); setQuery(""); }}><Icon name="spark" size={32} /><span>embody<span className="brand-light">star</span><span className="brand-dot">®</span></span></a>
+        <nav className="main-nav" aria-label="Main navigation"><button onClick={() => shop()}>Shop all</button><button onClick={() => shop("Robot kits")}>Robot kits</button><button onClick={() => shop("Components")}>Components</button><button onClick={() => shop("All products", true)}>New arrivals<span className="nav-dot" /></button></nav>
+        <div className="header-actions"><button className="icon-button" aria-label="Search products" onClick={() => { document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" }); searchInput.current?.focus({ preventScroll: true }); }}><Icon name="search" /></button><button className={`icon-button favorites-button ${savedOnly ? "selected" : ""}`} aria-label={`Show saved products (${saved.length})`} aria-pressed={savedOnly} onClick={() => { setSavedOnly(!savedOnly); setCategory("All products"); setNewOnly(false); setQuery(""); document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" }); }}><Icon name="heart" /></button><button className="bag-button" aria-label={`Open shopping bag, ${itemCount} items`} onClick={() => setView("cart")}><Icon name="bag" /><span className="bag-label">Bag</span><span className="bag-count">{itemCount}</span></button></div>
+      </header>
+      <main>
+        <section className="shop-hero" aria-labelledby="hero-title">
+          <div className="hero-copy"><span className="eyebrow"><span className="little-star">✳</span> For the makers of tomorrow</span><h1 id="hero-title">Good ideas.<br />Real-world<br /><span>possibilities.</span></h1><p>Meet your next project. Thoughtfully chosen robot kits, clever components, and tools to bring a little imagination to life.</p><button className="button button-lime" onClick={() => shop()}>Find your next build<Icon name="arrow" size={19} /></button><div className="hero-bottom"><span className="hero-rule" /><span>Less scrolling. More making.</span><span>01 / 01</span></div></div>
+          <div className="hero-visual"><Image src="/images/lerobot-arm.jpg" alt="Turquoise LeRobot arms at a robotics workbench, inspiring your next build" width={960} height={700} unoptimized preload /><div className="hero-image-top"><span>THE MAKER’S EDIT</span><span>VOL. 01 — ROBOTICS</span></div><div className="hero-image-card"><div><span>A small start.<br />Something extraordinary.</span><small>Explore the robot kits collection</small></div><button className="round-button" aria-label="Shop robot kits" onClick={() => shop("Robot kits")}><Icon name="arrow" size={23} /></button></div><span className="image-attribution">Robotics inspiration: LeRobot / Hugging Face</span></div>
+        </section>
+        <section className="store-values" aria-label="The EmbodyStar approach"><div><Icon name="spark" /><span>Curated for curiosity</span><small>Every build starts somewhere</small></div><div><Icon name="package" /><span>From first kit to next idea</span><small>Parts that open up possibilities</small></div><div><Icon name="heart" /><span>A shelf of your own</span><small>Save what inspires your next project</small></div></section>
+        <section id="shop" className="shop-section" aria-labelledby="shop-title">
+          <div className="section-heading"><div><span className="eyebrow muted">THE WORKBENCH COLLECTION</span><h2 id="shop-title">{savedOnly ? "Your saved finds." : newOnly ? "Fresh on the workbench." : "Small parts. Big possibilities."}</h2></div><p>A few good things for your next great idea.<br /><span>Explore our illustrative demo collection.</span></p></div>
+          <div className="shop-toolbar"><div className="category-tabs" aria-label="Product categories">{(["All products", ...categories] as const).map((item) => <button key={item} className={category === item ? "active" : ""} aria-pressed={category === item} onClick={() => { setCategory(item); setNewOnly(false); }}>{item}{item === "All products" && <span>{products.length}</span>}</button>)}</div><label className="sort-control"><span>Sort by:</span><select value={sort} onChange={(event) => setSort(event.target.value as Sort)} aria-label="Sort products"><option>Featured</option><option>Price: low to high</option><option>Price: high to low</option><option>Name: A–Z</option></select></label></div>
+          <div className="search-row"><label className="product-search"><Icon name="search" size={17} /><input ref={searchInput} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Find something for your next build…" aria-label="Search products" />{query && <button className="icon-button" aria-label="Clear search" onClick={() => setQuery("")}><Icon name="close" size={15} /></button>}</label><span className="result-count" aria-live="polite">{visible.length} {visible.length === 1 ? "find" : "finds"}{savedOnly ? " saved" : " to explore"}</span>{(newOnly || savedOnly) && <button className="text-link" onClick={() => { setNewOnly(false); setSavedOnly(false); }}>Clear {newOnly ? "new arrivals" : "saved filter"}<Icon name="close" size={13} /></button>}</div>
+          {visible.length ? <div className="product-grid">{visible.map((product, index) => <article className="product-card" key={product.id} style={{ animationDelay: `${index * 45}ms` }}><div className="product-image" style={{ backgroundColor: product.color }}><button className="product-preview" onClick={() => openProduct(product)} aria-label={`View ${product.name}`}><ProductArt art={product.art} /></button>{product.badge && <span className={`product-badge ${!product.stock ? "sold-out" : ""}`}>{product.badge}</span>}<button className={`save-button ${saved.includes(product.id) ? "is-saved" : ""}`} disabled={!ready} aria-label={`${saved.includes(product.id) ? "Unsave" : "Save"} ${product.name}`} aria-pressed={saved.includes(product.id)} onClick={() => toggleSaved(product.id)}><Icon name="heart" size={18} /></button><button className="quick-add" disabled={!ready || !product.stock} aria-label={`Add ${product.name} to bag`} onClick={() => addToCart(product)}>{product.stock ? <><Icon name="plus" size={16} /><span>Add to bag</span></> : "Sold out"}</button></div><div className="product-info"><span className="product-category">{product.category}</span><div><button className="product-name" onClick={() => openProduct(product)}><h3>{product.name}</h3></button><span className="product-price">{formatPrice(product.price)}</span></div></div></article>)}</div> : <div className="empty-products"><Icon name={savedOnly ? "heart" : "search"} size={32} /><h3>{savedOnly ? "A place for your next favorite." : "No finds just yet."}</h3><p>{savedOnly ? "Tap the heart on a product to keep it here for later." : "Try another search or explore the whole collection."}</p><button className="button button-dark" onClick={() => shop()}>Explore all products<Icon name="arrow" size={18} /></button></div>}
+        </section>
+        <section className="maker-banner"><div className="banner-mark" aria-hidden="true">✳</div><div><span className="eyebrow">BUILT AROUND POSSIBILITY</span><h2>For the “what if” people.</h2><p>The curious ones. The tinkerers. The just-getting-started.<br />There’s a little maker in all of us.</p></div><button className="button button-outline" onClick={() => setView("about")}>A little about us<Icon name="arrow" size={18} /></button></section>
+      </main>
+      <footer className="store-footer"><div><a className="store-brand footer-brand" href="#"><Icon name="spark" size={28} /><span>embody<span className="brand-light">star</span></span></a><p>Make something that moves you.</p></div><div className="footer-links"><button onClick={() => shop()}>Shop the collection</button><button onClick={() => setView("about")}>About EmbodyStar</button><a href="https://github.com/huggingface/lerobot" target="_blank" rel="noreferrer">Image credits ↗</a></div><div className="footer-note"><span>Designed for curious minds.</span><small>Demo store. Illustrative products and prices.<br />No real purchases or payments.</small></div></footer>
+      {notice && <div className="toast" role="status"><Icon name="check" size={18} /><span>{notice}</span><button onClick={() => { setView("cart"); setNotice(""); }}>View bag</button><button className="icon-button" aria-label="Dismiss notification" onClick={() => setNotice("")}><Icon name="close" size={15} /></button></div>}
+      <dialog ref={dialog} className={`shop-dialog ${view === "cart" || view === "checkout" ? "bag-dialog" : ""}`} onCancel={() => setView(null)} onClose={() => setView(null)} onClick={(event) => { if (event.target === event.currentTarget) setView(null); }} aria-labelledby="dialog-title"><div className="dialog-inner"><button className="dialog-close icon-button" aria-label="Close dialog" onClick={() => setView(null)}><Icon name="close" /></button>
+        {view === "product" && <div className="product-detail"><div className="detail-image" style={{ backgroundColor: selected.color }}><ProductArt art={selected.art} /><span>Illustrative product render</span></div><div className="detail-copy"><span className="eyebrow muted">{selected.category}</span><h2 id="dialog-title">{selected.name}</h2><span className="detail-price">{formatPrice(selected.price)} <small>USD · Demo price</small></span><p>{selected.description}</p><ul className="spec-list">{selected.specs.map((spec) => <li key={spec}><Icon name="check" size={16} />{spec}</li>)}</ul><span className={`stock-label ${!selected.stock ? "unavailable" : ""}`}><span />{selected.stock ? `${selected.stock} available in demo inventory` : "Currently sold out"}</span>{selected.stock > 0 && <div className="detail-purchase"><div className="quantity-control"><button disabled={productQuantity <= 1} aria-label="Decrease quantity" onClick={() => setProductQuantity((value) => Math.max(1, value - 1))}><Icon name="minus" size={15} /></button><output aria-label="Quantity">{productQuantity}</output><button disabled={productQuantity >= selected.stock} aria-label="Increase quantity" onClick={() => setProductQuantity((value) => Math.min(selected.stock, value + 1))}><Icon name="plus" size={15} /></button></div><button className="button button-dark" disabled={!ready || (cart.find((item) => item.productId === selected.id)?.quantity ?? 0) >= selected.stock} onClick={() => { addToCart(selected, productQuantity); setView("cart"); }}>Add to bag<Icon name="bag" size={18} /></button></div>}<button className="detail-save text-link" disabled={!ready} onClick={() => toggleSaved(selected.id)}><Icon name="heart" size={17} />{saved.includes(selected.id) ? "Saved to your finds" : "Save for another day"}</button><small className="demo-hint">This is a demo product. No purchase will be made.</small></div></div>}
+        {(view === "cart" || view === "checkout") && <div className="bag-content"><span className="eyebrow muted">A LITTLE POSSIBILITY, BAGGED</span><h2 id="dialog-title">{view === "checkout" ? "One last look." : "Your shopping bag."}<span>{itemCount}</span></h2>{cartProducts.length ? <><p className="bag-intro">{view === "checkout" ? "Review your demo order. No payment details needed." : "A good idea is taking shape."}</p><div className="shipping-note"><Icon name="package" size={19} /><div>{totals.subtotal >= 15000 ? "Your demo bag qualifies for free shipping." : `Add ${formatPrice(15000 - totals.subtotal)} for free demo shipping.`}<div className="shipping-progress"><span style={{ width: `${Math.min(100, totals.subtotal / 150)}%` }} /></div></div></div><div className="cart-items">{cartProducts.map(({ product, quantity }) => <div className="cart-item" key={product.id}><div className="cart-item-image" style={{ backgroundColor: product.color }}><ProductArt art={product.art} /></div><div className="cart-item-info"><span className="product-category">{product.category}</span><h3>{product.name}</h3><span>{formatPrice(product.price)}</span><div className="quantity-control"><button aria-label={`Decrease ${product.name} quantity`} onClick={() => setCart((items) => updateCart(items, product.id, quantity - 1))}><Icon name="minus" size={13} /></button><output aria-label={`${product.name} quantity`}>{quantity}</output><button disabled={quantity >= product.stock} aria-label={`Increase ${product.name} quantity`} onClick={() => setCart((items) => updateCart(items, product.id, quantity + 1))}><Icon name="plus" size={13} /></button></div></div><div className="cart-item-end"><button className="icon-button" aria-label={`Remove ${product.name}`} onClick={() => setCart((items) => updateCart(items, product.id, 0))}><Icon name="close" size={16} /></button><strong>{formatPrice(product.price * quantity)}</strong></div></div>)}</div><div className="bag-totals"><div><span>Subtotal</span><span>{formatPrice(totals.subtotal)}</span></div><div><span>Demo shipping</span><span>{totals.shipping ? formatPrice(totals.shipping) : "Free"}</span></div><div className="total-row"><strong>Total</strong><strong>{formatPrice(totals.total)} <small>USD</small></strong></div></div>{view === "checkout" ? <><div className="demo-checkout-note"><Icon name="check" size={20} /><p>This is a demo checkout. Completing it clears your bag and shows a confirmation. No real order is placed and no payment is collected.</p></div><button className="button button-dark checkout-button" onClick={finishDemoOrder}>Complete demo order<Icon name="arrow" size={18} /></button><button className="text-link continue-shopping" onClick={() => setView("cart")}>Back to bag</button></> : <><button className="button button-dark checkout-button" onClick={() => setView("checkout")}>Review demo order<Icon name="arrow" size={18} /></button><p className="checkout-footnote">Demo checkout · No payment required</p><button className="text-link continue-shopping" onClick={() => setView(null)}>Continue exploring</button></>}</> : <div className="empty-bag"><Icon name="bag" size={48} /><h3>Good things are waiting.</h3><p>Your bag is empty. Find a little something for your next big idea.</p><button className="button button-dark" onClick={() => { setView(null); shop(); }}>Explore the collection<Icon name="arrow" size={18} /></button></div>}{storageNotice && <p className="storage-notice">{storageNotice}</p>}</div>}
+        {view === "confirmation" && <div className="confirmation"><div className="confirmation-icon"><Icon name="check" size={32} /></div><span className="eyebrow muted">A LITTLE PRACTICE RUN</span><h2 id="dialog-title">That’s a wrap.</h2><p>You completed a demo order for <strong>{formatPrice(receiptTotal)}</strong>.</p><p>No money was charged and no order was placed.<br />Your next real-world idea is still waiting.</p><button className="button button-dark" onClick={() => { setView(null); shop(); }}>Keep exploring<Icon name="arrow" size={18} /></button></div>}
+        {view === "about" && <div className="about-content"><Icon name="spark" size={42} /><span className="eyebrow muted">HELLO, CURIOUS MIND.</span><h2 id="dialog-title">Ideas deserve<br />a little momentum.</h2><p>EmbodyStar is a demo shop for people who love to turn “what if” into “look at that.” A place for robotics kits, components, and the tools that make a workbench feel like a world of possibility.</p><p>This collection uses illustrative products, renders, prices, and inventory. The shopping bag lives in your browser; the demo checkout never charges you or sends an order.</p><button className="button button-dark" onClick={() => { setView(null); shop(); }}>Find your next build<Icon name="arrow" size={18} /></button></div>}
+      </div></dialog>
     </div>
   );
 }

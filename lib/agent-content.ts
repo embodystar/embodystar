@@ -1,4 +1,4 @@
-import { resources } from "./resources";
+import { formatPrice, products } from "./catalog";
 
 export const contentSignals = "ai-train=yes, search=yes, ai-input=yes";
 
@@ -20,33 +20,31 @@ export function prefersMarkdown(accept: string | null): boolean {
 
 export function homepageMarkdown(): string {
   return [
-    "# EmbodyStar — The Embodied AI Hub",
+    "# EmbodyStar — Robot Kits, Components & Curious Possibilities",
     "",
-    "Discover embodied intelligence.",
+    "Good ideas. Real-world possibilities.",
     "",
-    "The ideas, models, and tools bringing intelligence into the real world.",
+    "Robot kits, clever components, and tools for your next build. This is a demo storefront with illustrative products, prices, and inventory. No real purchases or payments are processed.",
     "",
     "Canonical URL: https://embodystar.com/",
     "",
-    "## Featured resource: LeRobot",
+    "## The workbench collection",
     "",
-    "Open models, datasets, and tools to take your next robotics project further. From the open-source community at Hugging Face.",
-    "",
-    "## Resource index",
-    "",
-    ...resources.flatMap((resource) => [
-      `### [${resource.title}](${resource.url})`,
+    ...products.flatMap((product) => [
+      `### ${product.name}`,
       "",
-      resource.description,
+      product.description,
       "",
-      `Category: ${resource.kind}. Maintainer: ${resource.org}. Tags: ${resource.tags.join(", ")}.`,
+      `Category: ${product.category}. Demo price: ${formatPrice(product.price)} USD. Availability: ${product.stock ? `${product.stock} in demo inventory` : "Sold out"}.`,
+      "",
+      ...product.specs.map((spec) => `- ${spec}`),
       "",
     ]),
-    "## Your reference shelf",
+    "## Shopping bag and checkout",
     "",
-    "Search and filter the index, bookmark resources, or add your own resource in the browser. Bookmarks and additions stay on that device.",
+    "Browse, search, sort, and save products in the browser. Your bag and saved products are stored on that device when browser storage is available.",
     "",
-    "[Explore the embodied AI community on GitHub](https://github.com/topics/embodied-ai)",
+    "Demo shipping is $12 USD, or free for a demo subtotal of $150 USD or more. Demo checkout clears your bag and shows a confirmation; it does not charge money or create a real order.",
     "",
   ].join("\n");
 }

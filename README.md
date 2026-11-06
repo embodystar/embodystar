@@ -1,50 +1,37 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EmbodyStar shop
 
-## Getting Started
+A responsive robotics shopping demo built with Next.js 16 and React 19. The storefront includes product search, category and new-arrival filters, price sorting, saved products, product detail dialogs, a persistent shopping bag, and a demo checkout.
 
-First, run the development server:
+## Development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`. Run `pnpm test` for the catalog, bag, sitemap, crawler-policy, and Markdown-negotiation checks, `pnpm lint` for ESLint, and `pnpm build` for the production build.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Catalog and shopping bag
 
-## Sitemap maintenance
+`lib/catalog.ts` is the shared source for the UI and agent-readable product catalog. Prices are integer USD cents. The eight products, their stock levels, specifications, and SVG illustrations are examples, not verified merchandise. Edit this source to add, update, or remove demo products. Product illustrations are in `app/components/product-art.tsx`; the hero photo retains the attribution in `public/images/ATTRIBUTION.md`.
 
-`app/sitemap.ts` generates `/sitemap.xml`. The homepage is currently the only public page URL; resource filters, dialogs, and browser-local collections do not have separate URLs.
+The shopping bag and saved products persist in localStorage under `embodystar-shop-v1` when browser storage is available. Stored quantities are validated against the current catalog and stock limits. Demo shipping is $12, with free demo shipping for a subtotal of $150 or more.
 
-When publishing or removing a public page route, add or remove its canonical HTTPS URL in `app/sitemap.ts` in the same deployment. If public content gains its own routes and a shared data source, generate those entries from the published content in that source so unpublished or deleted content is excluded. Keep the sitemap reference in `app/robots.txt` aligned with the production domain.
+Demo checkout reviews the bag, clears it on completion, and shows a confirmation. It does not collect payment details, charge money, submit an order, or reserve stock. Before selling real products, connect verified inventory, server-side price and stock validation, a payment provider, order persistence, taxes, and fulfillment. Authentication is not configured.
 
-## AI crawler policy and Markdown
+## Sitemap and crawler access
 
-`app/robots.txt` allows general crawling and the listed AI search and training crawlers (including the legacy Claude-Web identifier). Content Signals allow search, training, and AI input. Keep these directives aligned with the `Content-Signal` response header in `lib/agent-content.ts` when changing the policy.
+`app/sitemap.ts` generates `/sitemap.xml`. The homepage is currently the only public page URL; product filters, product detail dialogs, and the shopping bag share that URL. When publishing or removing a public page route, update its canonical HTTPS entry in the same deployment. If products gain dedicated page routes, generate sitemap entries from the same published catalog.
 
-Requests to `/` that prefer `Accept: text/markdown` receive a Markdown resource index through `proxy.ts`. HTML remains the default. Both responses vary on `Accept`; Markdown responses use `Cache-Control: no-store` to prevent a CDN from caching Markdown under the homepage's HTML URL. The UI and Markdown use the same published resources from `lib/resources.ts`, so edits and removals appear in both on deployment. Browser-local additions and bookmarks remain private to that browser. When adding a new public page, extend Markdown handling and the proxy matcher alongside its sitemap entry.
+`app/robots.txt` allows general crawling and the listed AI search and training crawlers. Content Signals allow search, training, and AI input. Keep its directives aligned with the `Content-Signal` response header in `lib/agent-content.ts` when changing policy.
 
-If Cloudflare manages robots.txt or transforms responses, keep its AI Crawl Control settings aligned with this policy. After deployment, scan `https://embodystar.com` using `POST https://isitagentready.com/api/scan` with `{"url":"https://embodystar.com"}` and verify `robotsTxt`, `sitemap`, AI bot rules, Content Signals, and Markdown negotiation all pass.
+Requests to `/` that prefer `Accept: text/markdown` receive a Markdown catalog through `proxy.ts`; HTML remains the default. Markdown responses include `Vary: Accept` and `Cache-Control: no-store` to prevent caching Markdown under the HTML URL. If a CDN is configured to cache HTML, its cache key must also include `Accept` or bypass caching for Markdown requests. The UI and Markdown use the same published products from `lib/catalog.ts`, so edits and removals appear in both on deployment. Browser-local shopping bags and saved items are excluded. When adding another public page, extend Markdown handling and the proxy matcher alongside its sitemap entry.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+If Cloudflare manages robots.txt or transforms responses, keep its AI Crawl Control settings aligned with this policy. After deployment, validate with:
 
-## Learn More
+```bash
+curl -X POST https://isitagentready.com/api/scan \
+  -H 'Content-Type: application/json' \
+  --data '{"url":"https://embodystar.com"}'
+```
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Check robots.txt, sitemap, AI bot rules, Content Signals, and Markdown negotiation in the response.
