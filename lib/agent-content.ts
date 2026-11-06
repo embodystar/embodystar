@@ -20,11 +20,11 @@ export function prefersMarkdown(accept: string | null): boolean {
 
 export function homepageMarkdown(): string {
   return [
-    "# EmbodyStar — Robot Kits, Components & Curious Possibilities",
+    "# EmbodyStar | Robot Kits & Components",
     "",
-    "Good ideas. Real-world possibilities.",
+    "Robot kits, components, and workbench tools.",
     "",
-    "Robot kits, clever components, and tools for your next build. This is a demo storefront with illustrative products, prices, and inventory. No real purchases or payments are processed.",
+    "Desktop robotics and parts for your next build. This is a demo storefront with illustrative products, prices, and inventory. No real purchases or payments are processed.",
     "",
     "Canonical URL: https://embodystar.com/",
     "",

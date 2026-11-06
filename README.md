@@ -12,7 +12,7 @@ Open `http://localhost:3000`. Run `pnpm test` for the catalog, bag, sitemap, cra
 
 ## Catalog and shopping bag
 
-`lib/catalog.ts` is the shared source for the UI and agent-readable product catalog. Prices are integer USD cents. The eight products, their stock levels, specifications, and SVG illustrations are examples, not verified merchandise. Edit this source to add, update, or remove demo products. Product illustrations are in `app/components/product-art.tsx`; the hero photo retains the attribution in `public/images/ATTRIBUTION.md`.
+`lib/catalog.ts` is the shared source for the UI and agent-readable product catalog. Prices are integer USD cents. The eight products, their stock levels, specifications are examples, not verified merchandise. Edit this source to add, update, or remove demo products. Product presentation is in `app/components/product-art.tsx`: hardware reference photos where available and specification covers elsewhere. Photos are clearly labeled as references, not verified SKU photos. Photo sources and licenses are recorded in `public/images/ATTRIBUTION.md` and `public/images/shop/ATTRIBUTION.md`. The Hallmark redesign review is recorded in `.hallmark/review.md`.
 
 The shopping bag and saved products persist in localStorage under `embodystar-shop-v1` when browser storage is available. Stored quantities are validated against the current catalog and stock limits. Demo shipping is $12, with free demo shipping for a subtotal of $150 or more.
 

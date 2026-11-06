@@ -1,22 +1,21 @@
 {
-  "scanned": "2026-11-05",
+  "scanned": "2026-11-06",
   "findings": {
-    "framework": "Next.js 16.4.3, React 19.3.0 (package.json:12)",
-    "fonts": "Arial fallback (previous app/globals.css:25); no locked brand font",
-    "palette": "Purple and light grey starter styling (previous app/globals.css:3)",
-    "motion": "CSS hover transitions; no motion library",
-    "scope": "Existing resource portal at app/page.tsx, app screen"
+    "framework": "Next.js 16.4.3 and React 19.3.0 (package.json:13)",
+    "fonts": "Locally hosted Hanken Grotesk (app/base.css:1)",
+    "palette": "EmbodyStar green accent and green-tinted neutral tokens (app/tokens.css:1)",
+    "material": "Eight existing demo products, prices, stock and specifications (lib/catalog.ts:19); existing LeRobot photograph",
+    "scope": "One public shopping page at app/page.tsx; existing dialogs and cart logic"
   },
   "preserve": [
-    "EmbodyStar wordmark",
-    "all resource facts and external URLs",
-    "search, category filters, sort, saved resources and local additions",
-    "static prerendering fix"
+    "Product facts, prices and inventory",
+    "All handlers, fields, routes, IDs and storage keys",
+    "Green brand accent and local Hanken Grotesk"
   ],
   "introduce": [
-    "Almanac theme",
-    "locally hosted Hanken Grotesk",
-    "readable resource index",
-    "tokens and base styles"
+    "Hallmark full redesign",
+    "Catalog-led index composition",
+    "Readable specifications and restrained commerce controls",
+    "Two licensed hardware reference photographs"
   ]
 }

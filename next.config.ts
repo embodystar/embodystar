@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
     // Use the compiler API to avoid the CLI --showConfig parsing failure.
     useTypeScriptCli: false,
   },
+  devIndicators: false,
   cacheComponents: true,
   partialPrefetching: true,
 };

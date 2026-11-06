@@ -1,74 +1,135 @@
 [
-  {
-    "mode": "redesign",
-    "scope": "app",
-    "depth": "full",
-    "theme": "EmbodyStar forest",
-    "prompt": "User requested a more beautiful portal after rejecting the slate Almanac design",
-    "signature": "Real robotics imagery with a welcoming resource discovery grid",
-    "axes": "light/sans/forest-green",
-    "sections": [
-      "search",
-      "LeRobot feature",
-      "subjects",
-      "resource cards",
-      "local collection"
-    ],
-    "verification": {
-      "build": "pass",
-      "lint": "pass",
-      "typescript": "pass",
-      "browser_interactions": "pass",
-      "viewport_widths": [
-        320,
-        375,
-        414,
-        768,
-        1024,
-        1280,
-        1440,
-        1920
-      ]
-    }
+ {
+  "mode": "redesign",
+  "depth": "full",
+  "scope": "page",
+  "shape": "Index-First",
+  "theme": "brand",
+  "axes": "light/grotesk-sans/forest-green",
+  "hero": "Banner",
+  "nav": "catalog bar",
+  "footer": "colophon",
+  "imagery": "Three labeled hardware reference photographs, factual specification covers for the other five products",
+  "photos": [
+   "user:lerobot-arm.jpg",
+   "CanoScan 5600F main PCB top view.jpg",
+   "2023 Wkrętak elektryczny Xiaomi.jpg"
+  ],
+  "entry": "Browse and compare robot kits and components",
+  "fingerprint": {
+   "material": "hardware photographs and specifications",
+   "surface": "tinted neutral paper",
+   "navigation": "top catalog bar",
+   "primary": "product specification rows",
+   "sections": "catalog with adjacent hardware offer",
+   "action": "compare and add to bag"
   },
-  {
-    "mode": "redesign",
-    "depth": "full",
-    "scope": "app",
-    "shape": "app screen",
-    "theme": "almanac",
-    "axes": "mid/grotesk-sans/chromatic-magenta",
-    "hero": "none, app screen",
-    "nav": "kept sidebar",
-    "footer": "compact resource footer",
-    "imagery": "none, real resource index",
-    "photos": [],
-    "entry": "search",
-    "fingerprint": {
-      "material": "words",
-      "surface": "slate",
-      "navigation": "sidebar",
-      "primary": "resource index",
-      "sections": "featured resource and index",
-      "action": "find and save"
-    },
-    "sections": [
-      "search",
-      "featured resource and subjects",
-      "resource index",
-      "local collection",
-      "footer"
-    ],
-    "signature": "robotics resource index",
-    "waived": [],
-    "prompt": "EmbodyStar embodied AI resource portal using Hallmark",
-    "verification": {
-      "floor": 0,
-      "reflex": 0,
-      "warn": 0,
-      "build": "pass",
-      "interaction": "pass"
-    },
-    "date": "2026-11-05"
+  "sections": [
+   "compact shop opening",
+   "filterable hardware catalog",
+   "about disclosure",
+   "credits and demo terms"
+  ],
+  "signature": "Hardware specification rows beside clearly labeled reference photography",
+  "waived": [
+   "39b",
+   "44c",
+   "59"
+  ],
+  "prompt": "Technical robotics shop with clear specifications, strong type and hardware photographs, redesigned with Hallmark",
+  "verification": {
+   "build": "pass",
+   "lint": "pass",
+   "typescript": "pass",
+   "tests": "pass",
+   "browser_interactions": "pass",
+   "viewport_widths": [
+    320,
+    375,
+    390,
+    768,
+    1024,
+    1280,
+    1440,
+    1920
+   ],
+   "floor": 0,
+   "open_reflex": 0,
+   "hero_review": "subagent, one finding resolved",
+   "finish_review": "subagent, two findings resolved"
+  },
+  "date": "2026-11-06"
+ },
+ {
+  "mode": "redesign",
+  "scope": "app",
+  "depth": "full",
+  "theme": "EmbodyStar forest",
+  "prompt": "User requested a more beautiful portal after rejecting the slate Almanac design",
+  "signature": "Real robotics imagery with a welcoming resource discovery grid",
+  "axes": "light/sans/forest-green",
+  "sections": [
+   "search",
+   "LeRobot feature",
+   "subjects",
+   "resource cards",
+   "local collection"
+  ],
+  "verification": {
+   "build": "pass",
+   "lint": "pass",
+   "typescript": "pass",
+   "browser_interactions": "pass",
+   "viewport_widths": [
+    320,
+    375,
+    414,
+    768,
+    1024,
+    1280,
+    1440,
+    1920
+   ]
   }
+ },
+ {
+  "mode": "redesign",
+  "depth": "full",
+  "scope": "app",
+  "shape": "app screen",
+  "theme": "almanac",
+  "axes": "mid/grotesk-sans/chromatic-magenta",
+  "hero": "none, app screen",
+  "nav": "kept sidebar",
+  "footer": "compact resource footer",
+  "imagery": "none, real resource index",
+  "photos": [],
+  "entry": "search",
+  "fingerprint": {
+   "material": "words",
+   "surface": "slate",
+   "navigation": "sidebar",
+   "primary": "resource index",
+   "sections": "featured resource and index",
+   "action": "find and save"
+  },
+  "sections": [
+   "search",
+   "featured resource and subjects",
+   "resource index",
+   "local collection",
+   "footer"
+  ],
+  "signature": "robotics resource index",
+  "waived": [],
+  "prompt": "EmbodyStar embodied AI resource portal using Hallmark",
+  "verification": {
+   "floor": 0,
+   "reflex": 0,
+   "warn": 0,
+   "build": "pass",
+   "interaction": "pass"
+  },
+  "date": "2026-11-05"
+ }
 ]
