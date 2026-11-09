@@ -21,19 +21,18 @@ export function prefersMarkdown(accept: string | null): boolean {
 export function homepageMarkdown(): string {
   return [
     `# ${landing.title}`, "",
-    "让智能，走进真实世界。", "", landing.description, "",
+    "Intelligence, in the real world.", "", landing.description, "",
     "Canonical URL: https://embodystar.com/", "",
-    "## 关于 EmbodyStar", "", landing.about, "",
-    "我们关注从感知环境、理解任务，到执行动作并获得反馈的完整过程。以开放的视角，连接具身智能的概念、开源工具与实践路径。", "",
-    "## 探索方向", "",
+    "## About EmbodyStar", "", landing.about, "", landing.approach, "",
+    "## Exploration", "",
     ...explorationAreas.flatMap((area) => [`### ${area.title}`, "", area.description, "", area.keywords, ""]),
-    "以上为项目关注的探索方向，具体进展请以项目仓库为准。", "",
-    "## 在交互中理解，在反馈中学习", "",
-    ...learningLoop.map((step, index) => `${index + 1}. ${step.title}：${step.description}`), "",
-    "## 开源资源", "",
+    landing.focusNote, "",
+    "## Understand through action. Learn through feedback.", "",
+    ...learningLoop.map((step, index) => `${index + 1}. ${step.title}: ${step.description}`), "",
+    "## Open-source resources", "",
     ...resources.flatMap((resource) => [`### [${resource.title}](${resource.url})`, "", resource.description, ""]),
-    "## 常见问题", "",
+    "## Frequently asked questions", "",
     ...faqs.flatMap((faq) => [`### ${faq.question}`, "", faq.answer, ""]),
-    "机械臂参考影像来自 LeRobot / Hugging Face，遵循 Apache 2.0 许可证。", "",
+    "Robot arm reference imagery: LeRobot / Hugging Face, licensed under Apache 2.0.", "",
   ].join("\n");
 }

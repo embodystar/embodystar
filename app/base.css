@@ -1,11 +1,4 @@
 @font-face {
-  font-family: "EmbodyStar Chinese";
-  src: url("/fonts/noto-sans-sc-landing.ttf") format("truetype");
-  font-weight: 400 600;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
   font-family: "Hanken Grotesk";
   src: url("/fonts/hanken-grotesk.ttf") format("truetype");
   font-weight: 100 900;

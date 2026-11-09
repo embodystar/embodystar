@@ -1,5 +1,0 @@
-Noto Sans SC, Regular.
-Source: https://fonts.google.com/noto/specimen/Noto+Sans+SC
-License: SIL Open Font License 1.1; see NOTO-OFL.txt.
-This subset includes the Chinese characters used in app/page.tsx and lib/landing.ts.
-Other characters fall back to the device system fonts.

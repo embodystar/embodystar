@@ -1,6 +1,6 @@
 # EmbodyStar
 
-A Chinese landing page about embodied intelligence, built with Next.js 16 and React 19. It introduces perception, action, and learning, with a project overview, an illustrative learning loop, open-source resources, and accessible FAQ disclosures.
+An English landing page about embodied intelligence, built with Next.js 16 and React 19. It introduces perception, action, and learning, with a project overview, an illustrative learning loop, open-source resources, and accessible FAQ disclosures.
 
 ## Development
 
