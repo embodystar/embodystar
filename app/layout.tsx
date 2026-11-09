@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { landing } from "../lib/landing";
 
 export const metadata: Metadata = {
-  title: "EmbodyStar | Robot Kits & Components",
-  description: "Browse robot kits, compare component specifications, and save products at EmbodyStar. A demo shop with a persistent shopping bag and demo checkout.",
+  title: landing.title,
+  description: landing.description,
   alternates: { canonical: "https://embodystar.com/" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="zh-CN">
       <body>{children}</body>
     </html>
   );

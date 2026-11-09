@@ -1,4 +1,4 @@
-import { formatPrice, products } from "./catalog";
+import { explorationAreas, faqs, landing, learningLoop, resources } from "./landing";
 
 export const contentSignals = "ai-train=yes, search=yes, ai-input=yes";
 
@@ -20,31 +20,20 @@ export function prefersMarkdown(accept: string | null): boolean {
 
 export function homepageMarkdown(): string {
   return [
-    "# EmbodyStar | Robot Kits & Components",
-    "",
-    "Robot kits, components, and workbench tools.",
-    "",
-    "Desktop robotics and parts for your next build. This is a demo storefront with illustrative products, prices, and inventory. No real purchases or payments are processed.",
-    "",
-    "Canonical URL: https://embodystar.com/",
-    "",
-    "## The workbench collection",
-    "",
-    ...products.flatMap((product) => [
-      `### ${product.name}`,
-      "",
-      product.description,
-      "",
-      `Category: ${product.category}. Demo price: ${formatPrice(product.price)} USD. Availability: ${product.stock ? `${product.stock} in demo inventory` : "Sold out"}.`,
-      "",
-      ...product.specs.map((spec) => `- ${spec}`),
-      "",
-    ]),
-    "## Shopping bag and checkout",
-    "",
-    "Browse, search, sort, and save products in the browser. Your bag and saved products are stored on that device when browser storage is available.",
-    "",
-    "Demo shipping is $12 USD, or free for a demo subtotal of $150 USD or more. Demo checkout clears your bag and shows a confirmation; it does not charge money or create a real order.",
-    "",
+    `# ${landing.title}`, "",
+    "让智能，走进真实世界。", "", landing.description, "",
+    "Canonical URL: https://embodystar.com/", "",
+    "## 关于 EmbodyStar", "", landing.about, "",
+    "我们关注从感知环境、理解任务，到执行动作并获得反馈的完整过程。以开放的视角，连接具身智能的概念、开源工具与实践路径。", "",
+    "## 探索方向", "",
+    ...explorationAreas.flatMap((area) => [`### ${area.title}`, "", area.description, "", area.keywords, ""]),
+    "以上为项目关注的探索方向，具体进展请以项目仓库为准。", "",
+    "## 在交互中理解，在反馈中学习", "",
+    ...learningLoop.map((step, index) => `${index + 1}. ${step.title}：${step.description}`), "",
+    "## 开源资源", "",
+    ...resources.flatMap((resource) => [`### [${resource.title}](${resource.url})`, "", resource.description, ""]),
+    "## 常见问题", "",
+    ...faqs.flatMap((faq) => [`### ${faq.question}`, "", faq.answer, ""]),
+    "机械臂参考影像来自 LeRobot / Hugging Face，遵循 Apache 2.0 许可证。", "",
   ].join("\n");
 }
