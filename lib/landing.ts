@@ -30,3 +30,27 @@ export const faqs = [
   { question: "How can I follow progress or contribute?", answer: "Visit the EmbodyStar GitHub repository linked on this page to explore the code and updates, or join the discussion through repository Issues." },
   { question: "Is the robot arm an EmbodyStar product?", answer: "The image comes from Hugging Face's LeRobot project and illustrates an embodied intelligence setting. It does not show an EmbodyStar product or imply a commercial partnership. Image credits and the license are linked in the footer." },
 ];
+
+export const architectureStages = [
+  {
+    id: "perception", label: "01 / PERCEPTION", title: "Make the world observable.",
+    description: "Visual input and robot state become an observation: the information a policy can use to choose an action.",
+    input: "Image + joint state", output: "Observation o_t", filename: "observation.example.json",
+    code: '{\n  "observation": {\n    "image": {\n      "shape": [480, 640, 3],\n      "encoding": "rgb8"\n    },\n    "joint_positions": [-0.49, 1.83],\n    "frame": "robot_base"\n  }\n}',
+    note: "An illustrative observation schema, not a live camera stream.",
+  },
+  {
+    id: "action", label: "02 / ACTION", title: "Give intent a direction.",
+    description: "A policy maps observations to an action representation. Joint targets are one way to describe what a robot should do next.",
+    input: "Observation o_t", output: "Action a_t", filename: "action.example.json",
+    code: '{\n  "action": {\n    "representation": "joint_targets",\n    "joint_positions": [-0.35, 1.57],\n    "units": "radians",\n    "reference_frame": "robot_base"\n  },\n  "execution": "illustrative_only"\n}',
+    note: "Example targets explain the data flow; no physical hardware is connected.",
+  },
+  {
+    id: "learning", label: "03 / LEARNING", title: "Close the feedback loop.",
+    description: "Recorded observations, actions, and outcomes form an episode. Reviewing this experience connects execution with learning.",
+    input: "Action + next observation", output: "Episode record", filename: "episode.example.json",
+    code: '{\n  "episode": {\n    "task": "reach_target",\n    "transitions": [\n      {\n        "observation": "o_t",\n        "action": "a_t",\n        "next_observation": "o_t+1"\n      }\n    ]\n  }\n}',
+    note: "A conceptual episode structure, not a training result or performance claim.",
+  },
+];

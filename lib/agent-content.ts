@@ -1,4 +1,4 @@
-import { explorationAreas, faqs, landing, learningLoop, resources } from "./landing";
+import { architectureStages, explorationAreas, faqs, landing, learningLoop, resources } from "./landing";
 
 export const contentSignals = "ai-train=yes, search=yes, ai-input=yes";
 
@@ -21,12 +21,16 @@ export function prefersMarkdown(accept: string | null): boolean {
 export function homepageMarkdown(): string {
   return [
     `# ${landing.title}`, "",
-    "Intelligence, in the real world.", "", landing.description, "",
+    "Intelligence. In motion.", "", landing.description, "",
     "Canonical URL: https://embodystar.com/", "",
     "## About EmbodyStar", "", landing.about, "", landing.approach, "",
     "## Exploration", "",
     ...explorationAreas.flatMap((area) => [`### ${area.title}`, "", area.description, "", area.keywords, ""]),
     landing.focusNote, "",
+    "## Interactive kinematic study", "",
+    "Explore a conceptual robot arm in point-cloud or wireframe view. Adjust the shoulder and elbow joints to change its pose and inspect computed end-effector coordinates in model units. Rotation can be paused; reduced-motion preferences are respected. No physical robot is connected.", "",
+    "## System architecture", "",
+    ...architectureStages.flatMap((stage) => [`### ${stage.title}`, "", stage.description, "", `Input: ${stage.input}. Output: ${stage.output}.`, "", "```json", stage.code, "```", "", stage.note, ""]),
     "## Understand through action. Learn through feedback.", "",
     ...learningLoop.map((step, index) => `${index + 1}. ${step.title}: ${step.description}`), "",
     "## Open-source resources", "",
