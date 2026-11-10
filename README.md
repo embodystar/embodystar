@@ -51,3 +51,13 @@ Confirm that `checks.discovery.apiCatalog.status` is `"pass"`.
 The API catalog also lists this interface, with `public/a2a-openapi.json` and `public/a2a-docs.md` describing the service. These Next.js Route Handlers deploy through the existing Cloudflare Workers build; no separate Agents SDK service or Durable Object binding is required for this synchronous content adapter.
 
 Run `pnpm test` for Agent Card and service contract checks. After publishing, use the scan command above and confirm `checks.discovery.a2aAgentCard.status` is `"pass"`.
+
+## Agent Skills discovery
+
+`/.well-known/agent-skills/index.json` publishes the Agent Skills Discovery v0.2.0 index. Its `get-public-content` entry links to a standalone `SKILL.md` that explains how to retrieve the existing Markdown overview directly or through A2A.
+
+Edit the skill at `public/.well-known/agent-skills/get-public-content/SKILL.md`, then run `pnpm skills:generate`. The generator derives the index metadata from the frontmatter and hashes the exact artifact bytes with SHA-256. Keep the frontmatter name on one line and the description as a single JSON-quoted string (valid YAML). Each skill's directory must match its name. Commit the updated artifact and index together.
+
+`pnpm dev` and `pnpm build` generate the index automatically; `pnpm test` checks for a stale index and verifies the published metadata and digests. Next.js serves the static index and artifact with JSON and Markdown media types, supports `GET` and `HEAD`, and returns 404 for missing artifacts.
+
+After publishing, run the scan command above and confirm `checks.discovery.agentSkills.status` is `"pass"`. Also fetch each artifact and compare its SHA-256 hash with the index to verify integrity through the deployed CDN.

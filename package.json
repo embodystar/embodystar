@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "node scripts/generate-skills-index.mjs && next dev",
+    "build": "node scripts/generate-skills-index.mjs && next build",
     "start": "next start",
-    "test": "node --test tests/*.test.mjs",
+    "test": "node scripts/generate-skills-index.mjs --check && node --test tests/*.test.mjs",
+    "skills:generate": "node scripts/generate-skills-index.mjs",
     "lint": "eslint"
   },
   "dependencies": {

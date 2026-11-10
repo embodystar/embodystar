@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "skills": [
+    {
+      "name": "get-public-content",
+      "type": "skill-md",
+      "description": "Retrieve EmbodyStar's public project overview, conceptual architecture, resource links, and FAQs. Use when asked about EmbodyStar or when another agent needs its published content.",
+      "url": "https://embodystar.com/.well-known/agent-skills/get-public-content/SKILL.md",
+      "digest": "sha256:652ea9399f3abc2408cb635195c8a3ab5a32c4855aac5ad6d461c5a2aeb0557f"
+    }
+  ]
+}
