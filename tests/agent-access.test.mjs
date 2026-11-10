@@ -78,9 +78,86 @@ test("HEAD has Markdown headers and no response body", async () => {
   assert.equal(await response.text(), "");
 });
 
+test("HTML and Markdown GET and HEAD responses advertise the API catalog", () => {
+  for (const method of ["GET", "HEAD"]) {
+    for (const accept of ["text/html", "text/markdown"]) {
+      const response = proxy(new NextRequest("https://embodystar.com/", {
+        method,
+        headers: { Accept: accept },
+      }));
+      const link = response.headers.get("link");
+      assert.match(link, /<https:\/\/embodystar\.com\/\.well-known\/api-catalog>/);
+      assert.match(link, /rel="api-catalog"/);
+      assert.match(link, /type="application\/linkset\+json"/);
+    }
+  }
+});
+
+test("API catalog GET and HEAD expose the Linkset media type and discovery relation", async () => {
+  const { GET, HEAD } = loadTypeScript("app/.well-known/api-catalog/route.ts");
+  const get = await GET();
+  const head = await HEAD();
+  for (const response of [get, head]) {
+    assert.equal(response.status, 200);
+    assert.match(response.headers.get("content-type"), /^application\/linkset\+json(?:;|$)/);
+    assert.match(response.headers.get("content-type"), /profile="https:\/\/www\.rfc-editor\.org\/info\/rfc9727"/);
+    assert.match(response.headers.get("link"), /<https:\/\/embodystar\.com\/\.well-known\/api-catalog>;\s*rel="api-catalog"/);
+  }
+  assert.equal(head.headers.get("content-type"), get.headers.get("content-type"));
+  assert.equal(head.headers.get("link"), get.headers.get("link"));
+  assert.equal(await head.text(), "");
+
+  const catalog = await get.json();
+  assert.ok(Array.isArray(catalog.linkset) && catalog.linkset.length > 0);
+  const anchors = new Set();
+  for (const api of catalog.linkset) {
+    assert.equal(new URL(api.anchor).protocol, "https:");
+    assert.ok(!anchors.has(api.anchor), `Duplicate API anchor: ${api.anchor}`);
+    anchors.add(api.anchor);
+    for (const relation of ["service-desc", "service-doc"]) {
+      assert.ok(Array.isArray(api[relation]) && api[relation].length > 0, relation);
+      for (const link of api[relation]) {
+        assert.equal(new URL(link.href).protocol, "https:");
+        assert.equal(typeof link.type, "string");
+      }
+    }
+  }
+});
+
+test("catalog links resolve to a spec and docs for the actual public content interface", async () => {
+  const { GET } = loadTypeScript("app/.well-known/api-catalog/route.ts");
+  const { linkset } = await (await GET()).json();
+  const contentApi = linkset.find((api) => api.anchor === "https://embodystar.com/");
+  assert.ok(contentApi, "The existing homepage content interface must be discoverable");
+  const specLink = contentApi["service-desc"].find((link) => link.type === "application/json");
+  const docsLink = contentApi["service-doc"].find((link) => link.type === "text/markdown");
+  assert.ok(specLink);
+  assert.ok(docsLink);
+  const readPublicLink = (link) => {
+    const url = new URL(link.href);
+    assert.equal(url.origin, "https://embodystar.com");
+    return fs.readFileSync(path.join(__dirname, "../public", url.pathname), "utf8");
+  };
+  const spec = JSON.parse(readPublicLink(specLink));
+  assert.match(spec.openapi, /^3\./);
+  assert.ok(spec.servers.some((server) => new URL(server.url).origin === "https://embodystar.com"));
+  assert.ok(spec.paths["/"].head.responses["200"]);
+  const representations = spec.paths["/"].get.responses["200"].content;
+  assert.equal(representations["text/markdown"].schema.type, "string");
+  assert.equal(representations["text/html"].schema.type, "string");
+
+  const response = proxy(new NextRequest(contentApi.anchor, { headers: { Accept: "text/markdown" } }));
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get("content-type"), /^text\/markdown/);
+  assert.match(await response.text(), /^# EmbodyStar/);
+  const docs = readPublicLink(docsLink);
+  assert.match(docs, /Accept: text\/markdown/);
+  assert.ok(docs.includes(contentApi.anchor));
+});
+
 test("proxy only matches the public homepage", () => {
   assert.equal(unstable_doesMiddlewareMatch({ config, nextConfig: {}, url: "/" }), true);
-  for (const url of ["/robots.txt", "/sitemap.xml", "/favicon.ico", "/_next/static/app.js", "/images/lerobot-arm.jpg", "/missing"]) {
+  for (const url of ["/robots.txt", "/sitemap.xml", "/favicon.ico", "/.well-known/api-catalog", "/openapi.json", "/api-docs.md", "/_next/static/app.js", "/images/lerobot-arm.jpg", "/missing"]) {
     assert.equal(unstable_doesMiddlewareMatch({ config, nextConfig: {}, url }), false, url);
   }
 });

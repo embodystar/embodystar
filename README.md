@@ -4,7 +4,7 @@ An English landing page about embodied intelligence, built with Next.js 16 and R
 
 ## Development
 
-Run `pnpm dev` to preview at `http://localhost:3000`, `pnpm test` for content negotiation, crawler-policy, and sitemap checks, and `pnpm build` for a production build.
+Run `pnpm dev` to preview at `http://localhost:3000`, `pnpm test` for content negotiation, API catalog, crawler-policy, and sitemap checks, and `pnpm build` for a production build.
 
 ## Content
 
@@ -25,3 +25,19 @@ The site has no commerce flow, cart, checkout, or browser persistence. Explorati
 `app/sitemap.ts` lists the canonical homepage. `app/robots.txt` allows crawling and the listed AI search and training crawlers. Keep its Content Signals aligned with `lib/agent-content.ts`.
 
 Requests to `/` preferring `Accept: text/markdown` receive a Markdown version through `proxy.ts`; HTML remains the default. Markdown responses include `Vary: Accept` and `Cache-Control: no-store`. Any CDN caching HTML must include `Accept` in the cache key or bypass caching for Markdown requests. When adding another public route, update its sitemap entry, Markdown handling, and proxy matcher together.
+
+## API discovery
+
+`/.well-known/api-catalog` serves an RFC 9727 Linkset describing the existing read-only Markdown content interface at `/`. It supports `GET` and `HEAD`, returns `application/linkset+json` with the RFC profile, and advertises its canonical URL through a `Link` header. Homepage responses advertise the same catalog.
+
+`lib/api-catalog.ts` lists the public interfaces. Each entry links to its OpenAPI specification and usage documentation, currently served from `public/openapi.json` and `public/api-docs.md`. Keep these resources synchronized with the actual endpoints when adding or changing an API. The conceptual robotics examples are not API endpoints, and no health endpoint is advertised.
+
+After deployment, validate the public catalog:
+
+```sh
+curl --fail --request POST https://isitagentready.com/api/scan \
+  --header 'Content-Type: application/json' \
+  --data '{"url":"https://embodystar.com"}'
+```
+
+Confirm that `checks.discovery.apiCatalog.status` is `"pass"`.

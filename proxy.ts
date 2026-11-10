@@ -1,10 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { contentSignals, homepageMarkdown, prefersMarkdown } from "./lib/agent-content";
+import { apiCatalogLink } from "./lib/api-catalog";
 
 export function proxy(request: NextRequest) {
   const headers = {
     Vary: "Accept",
     "Content-Signal": contentSignals,
+    Link: apiCatalogLink,
   };
 
   if (

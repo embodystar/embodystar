@@ -1,0 +1,68 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "EmbodyStar Public Content API",
+    "version": "1.0.0",
+    "description": "Read-only access to EmbodyStar's public project overview, exploration areas, architecture examples, resources, and FAQs. Request text/markdown to receive the content as Markdown. Robotics examples describe concepts; this interface does not operate hardware."
+  },
+  "servers": [{ "url": "https://embodystar.com" }],
+  "externalDocs": {
+    "description": "Content API usage guide",
+    "url": "https://embodystar.com/api-docs.md"
+  },
+  "security": [],
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "getPublicContent",
+        "summary": "Read the public project overview",
+        "description": "Send Accept: text/markdown for Markdown. HTML is the default for a missing Accept header or wildcard alone. An explicit, positive Markdown quality must be at least as high as the HTML alternative to select Markdown. No authentication or request body is required.",
+        "responses": {
+          "200": {
+            "description": "Public content in the negotiated representation. Markdown responses use Cache-Control: no-store.",
+            "headers": {
+              "Vary": {
+                "description": "Cache variation fields. Markdown responses include Accept; additional fields may be added by the server.",
+                "schema": { "type": "string", "example": "Accept" }
+              },
+              "Content-Signal": {
+                "description": "Content usage signals for automated clients.",
+                "schema": { "type": "string", "example": "ai-train=yes, search=yes, ai-input=yes" }
+              },
+              "Link": {
+                "description": "An api-catalog link to /.well-known/api-catalog.",
+                "schema": { "type": "string" }
+              },
+              "Cache-Control": { "schema": { "type": "string" } }
+            },
+            "content": {
+              "text/markdown": { "schema": { "type": "string" } },
+              "text/html": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      },
+      "head": {
+        "operationId": "getPublicContentHeaders",
+        "summary": "Inspect content headers without downloading the overview",
+        "description": "Uses the same Accept negotiation as GET. Send Accept: text/markdown to inspect the Markdown representation. No authentication is required.",
+        "responses": {
+          "200": {
+            "description": "Headers for the negotiated representation, with an empty response body.",
+            "headers": {
+              "Vary": {
+                "description": "Cache variation fields for the negotiated representation.",
+                "schema": { "type": "string", "example": "Accept" }
+              },
+              "Content-Signal": { "schema": { "type": "string" } },
+              "Link": {
+                "description": "An api-catalog link to /.well-known/api-catalog.",
+                "schema": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
