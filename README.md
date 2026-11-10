@@ -4,7 +4,7 @@ An English landing page about embodied intelligence, built with Next.js 16 and R
 
 ## Development
 
-Run `pnpm dev` to preview at `http://localhost:3000`, `pnpm test` for content negotiation, API catalog, crawler-policy, and sitemap checks, and `pnpm build` for a production build.
+Run `pnpm dev` to preview at `http://localhost:3000`, `pnpm test` for content negotiation, API catalog, A2A, crawler-policy, and sitemap checks, and `pnpm build` for a production build.
 
 ## Content
 
@@ -28,9 +28,9 @@ Requests to `/` preferring `Accept: text/markdown` receive a Markdown version th
 
 ## API discovery
 
-`/.well-known/api-catalog` serves an RFC 9727 Linkset describing the existing read-only Markdown content interface at `/`. It supports `GET` and `HEAD`, returns `application/linkset+json` with the RFC profile, and advertises its canonical URL through a `Link` header. Homepage responses advertise the same catalog.
+`/.well-known/api-catalog` serves an RFC 9727 Linkset describing the read-only Markdown content interface at `/` and the A2A interface at `/api/a2a`. It supports `GET` and `HEAD`, returns `application/linkset+json` with the RFC profile, and advertises its canonical URL through a `Link` header. Homepage responses advertise the same catalog.
 
-`lib/api-catalog.ts` lists the public interfaces. Each entry links to its OpenAPI specification and usage documentation, currently served from `public/openapi.json` and `public/api-docs.md`. Keep these resources synchronized with the actual endpoints when adding or changing an API. The conceptual robotics examples are not API endpoints, and no health endpoint is advertised.
+`lib/api-catalog.ts` lists the public interfaces. Each entry links to its OpenAPI specification and usage documentation: `public/openapi.json` and `public/api-docs.md` for the Markdown interface, and the corresponding `a2a-` files for the agent. Keep these resources synchronized with the actual endpoints when adding or changing an API. The conceptual robotics examples are not API endpoints, and no health endpoint is advertised.
 
 After deployment, validate the public catalog:
 
@@ -41,3 +41,13 @@ curl --fail --request POST https://isitagentready.com/api/scan \
 ```
 
 Confirm that `checks.discovery.apiCatalog.status` is `"pass"`.
+
+## A2A discovery
+
+`/.well-known/agent-card.json` publishes the EmbodyStar Content Agent's identity, A2A 1.0 JSON-RPC interface, supported media types, and `get-public-content` skill. The card supports conditional `GET` and `HEAD` requests with an ETag and a five-minute cache lifetime. Bump the card version in `lib/agent-card.ts` when its metadata or advertised behavior changes.
+
+`POST /api/a2a` handles `SendMessage` by returning the existing public Markdown overview as a direct A2A message. It is stateless, makes no external model calls, and exposes no robot-control capability. Streaming, push notifications, and extended agent cards are disabled. The endpoint limits request bodies to 64 KiB and returns protocol errors for invalid or unsupported requests.
+
+The API catalog also lists this interface, with `public/a2a-openapi.json` and `public/a2a-docs.md` describing the service. These Next.js Route Handlers deploy through the existing Cloudflare Workers build; no separate Agents SDK service or Durable Object binding is required for this synchronous content adapter.
+
+Run `pnpm test` for Agent Card and service contract checks. After publishing, use the scan command above and confirm `checks.discovery.a2aAgentCard.status` is `"pass"`.

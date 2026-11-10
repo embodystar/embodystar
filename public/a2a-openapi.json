@@ -1,0 +1,143 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "EmbodyStar Content Agent",
+    "version": "1.0.0",
+    "description": "Stateless A2A 1.0 JSON-RPC service. SendMessage returns the complete published Markdown overview. No persistent tasks, streaming, push notifications, or extended agent card are supported."
+  },
+  "servers": [{ "url": "https://embodystar.com" }],
+  "externalDocs": { "url": "https://embodystar.com/a2a-docs.md" },
+  "security": [],
+  "paths": {
+    "/api/a2a": {
+      "post": {
+        "operationId": "callContentAgent",
+        "summary": "Retrieve published content through A2A SendMessage",
+        "description": "Use the PascalCase method SendMessage and a ROLE_USER message containing text parts. Each request returns the complete current overview as a direct ROLE_AGENT message. Requests with an id receive a JSON-RPC response; notifications without an id return HTTP 204. Batches contain at most 16 requests. Request bodies are limited to 65536 bytes. Supply A2A-Version: 1.0; the header takes precedence over the same-named query parameter. Missing versions default to the unsupported legacy 0.3 version and produce a version error.",
+        "parameters": [
+          { "name": "A2A-Version", "in": "header", "description": "A2A protocol version. Supply 1.0 here or in the query parameter.", "schema": { "type": "string", "example": "1.0" } },
+          { "name": "A2A-Version", "in": "query", "description": "Fallback protocol version when the header is absent.", "schema": { "type": "string", "example": "1.0" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  { "$ref": "#/components/schemas/RpcRequest" },
+                  { "type": "array", "minItems": 1, "maxItems": 16, "items": { "$ref": "#/components/schemas/RpcRequest" } }
+                ]
+              },
+              "example": {
+                "jsonrpc": "2.0",
+                "id": "overview-1",
+                "method": "SendMessage",
+                "params": {
+                  "message": {
+                    "messageId": "request-1",
+                    "role": "ROLE_USER",
+                    "parts": [{ "text": "Get the EmbodyStar project overview." }]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "A JSON-RPC result or protocol error. SendMessage succeeds with result.message containing a messageId, contextId, ROLE_AGENT role, and Markdown text part. Invalid parameters use -32602; unknown methods -32601; unknown tasks -32001; push notifications -32003; other unsupported operations -32004; unsupported content -32005; incompatible protocol versions -32009.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    { "$ref": "#/components/schemas/RpcResponse" },
+                    { "type": "array", "items": { "$ref": "#/components/schemas/RpcResponse" } }
+                  ]
+                }
+              }
+            }
+          },
+          "204": { "description": "Notification processed; no JSON-RPC response body." },
+          "400": { "description": "Malformed JSON or invalid JSON-RPC request envelope.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RpcResponse" } } } },
+          "413": { "description": "Request body exceeds 64 KiB or a batch contains more than 16 requests.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RpcResponse" } } } },
+          "415": { "description": "Content-Type must be application/json.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RpcResponse" } } } }
+        }
+      }
+    },
+    "/.well-known/agent-card.json": {
+      "get": {
+        "operationId": "getAgentCard",
+        "summary": "Discover the agent's A2A interface and skill",
+        "parameters": [{ "name": "If-None-Match", "in": "header", "schema": { "type": "string" } }],
+        "responses": {
+          "200": { "description": "Public A2A Agent Card with identity, supportedInterfaces, capabilities, media types, and skills.", "content": { "application/json": { "schema": { "type": "object" } } } },
+          "304": { "description": "The cached Agent Card is current." }
+        }
+      },
+      "head": {
+        "operationId": "getAgentCardHeaders",
+        "summary": "Inspect Agent Card caching headers",
+        "parameters": [{ "name": "If-None-Match", "in": "header", "schema": { "type": "string" } }],
+        "responses": {
+          "200": { "description": "JSON media type, Cache-Control, and ETag headers; no body." },
+          "304": { "description": "The cached Agent Card is current; no body." }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RpcRequest": {
+        "type": "object",
+        "required": ["jsonrpc", "method"],
+        "properties": {
+          "jsonrpc": { "const": "2.0" },
+          "id": { "type": ["string", "number", "null"] },
+          "method": { "type": "string", "example": "SendMessage" },
+          "params": {
+            "type": "object",
+            "description": "SendMessage requires message.messageId, role ROLE_USER, and a nonempty parts array of text parts. Optional configuration.acceptedOutputModes must accept text/markdown. Task references cannot be resolved by this stateless service."
+          }
+        }
+      },
+      "RpcResponse": {
+        "type": "object",
+        "required": ["jsonrpc", "id"],
+        "oneOf": [{ "required": ["result"] }, { "required": ["error"] }],
+        "properties": {
+          "jsonrpc": { "const": "2.0" },
+          "id": { "type": ["string", "number", "null"] },
+          "result": {
+            "type": "object",
+            "required": ["message"],
+            "properties": {
+              "message": {
+                "type": "object",
+                "required": ["messageId", "contextId", "role", "parts"],
+                "properties": {
+                  "messageId": { "type": "string" },
+                  "contextId": { "type": "string" },
+                  "role": { "const": "ROLE_AGENT" },
+                  "parts": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "object",
+                      "required": ["text", "mediaType"],
+                      "properties": { "text": { "type": "string" }, "mediaType": { "const": "text/markdown" } }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "error": {
+            "type": "object",
+            "required": ["code", "message"],
+            "properties": { "code": { "type": "integer" }, "message": { "type": "string" } }
+          }
+        }
+      }
+    }
+  }
+}
