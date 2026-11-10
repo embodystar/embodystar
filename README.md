@@ -4,7 +4,7 @@ An English landing page about embodied intelligence, built with Next.js 16 and R
 
 ## Development
 
-Run `pnpm dev` to preview at `http://localhost:3000`, `pnpm test` for content negotiation, API catalog, A2A, crawler-policy, and sitemap checks, and `pnpm build` for a production build.
+Run `pnpm dev` to preview at `http://localhost:3000`, `pnpm test` for content negotiation, discovery, A2A, MCP, crawler-policy, and sitemap checks, and `pnpm build` for a production build.
 
 ## Content
 
@@ -61,3 +61,11 @@ Edit the skill at `public/.well-known/agent-skills/get-public-content/SKILL.md`,
 `pnpm dev` and `pnpm build` generate the index automatically; `pnpm test` checks for a stale index and verifies the published metadata and digests. Next.js serves the static index and artifact with JSON and Markdown media types, supports `GET` and `HEAD`, and returns 404 for missing artifacts.
 
 After publishing, run the scan command above and confirm `checks.discovery.agentSkills.status` is `"pass"`. Also fetch each artifact and compare its SHA-256 hash with the index to verify integrity through the deployed CDN.
+
+## MCP discovery
+
+`/.well-known/mcp/server-card.json` publishes the requested compatibility Server Card with `serverInfo`, a Streamable HTTP `transport.endpoint`, and the service's supported capabilities. The accepted [SEP-2127](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2127) uses a different card format: `/mcp/server-card` publishes that format, linked from `/.well-known/ai-catalog.json`. Metadata comes from `lib/mcp-server-card.ts`; all three discovery documents support GET and HEAD, public CORS, and five-minute caching.
+
+`POST /mcp` uses the official MCP TypeScript SDK's Web Standard handler on the existing Cloudflare deployment. Its `get_public_content` tool and `public-content` resource both return the site's published Markdown overview. The service is public and stateless, supports current and legacy clients, and limits request bodies to 64 KiB. It offers no prompts, subscriptions, persistent SSE sessions, external model calls, or robot control.
+
+The API catalog links the service, `public/mcp-openapi.json`, and `public/mcp-docs.md`. `pnpm test` exercises discovery and tool/resource access through the official MCP client. After deployment, run the scan command above and confirm `checks.discovery.mcpServerCard.status` is `"pass"`.
