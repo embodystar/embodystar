@@ -1,4 +1,7 @@
-import { mcpDiscoveryHeaders, mcpServerCard } from "../../../../lib/mcp-server-card";
+import {
+  mcpDiscoveryHeaders,
+  mcpServerCard,
+} from "../../../../lib/mcp-server-card";
 
 const headers = { ...mcpDiscoveryHeaders, "Content-Type": "application/json" };
 
@@ -11,5 +14,8 @@ export function HEAD() {
 }
 
 export function OPTIONS() {
-  return new Response(null, { status: 204, headers: { ...mcpDiscoveryHeaders, Allow: "GET, HEAD, OPTIONS" } });
+  return new Response(null, {
+    status: 204,
+    headers: { ...mcpDiscoveryHeaders, Allow: "GET, HEAD, OPTIONS" },
+  });
 }

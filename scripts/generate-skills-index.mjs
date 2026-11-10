@@ -2,7 +2,10 @@ import { createHash } from "node:crypto";
 import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
-const directory = new URL("../public/.well-known/agent-skills/", import.meta.url);
+const directory = new URL(
+  "../public/.well-known/agent-skills/",
+  import.meta.url,
+);
 const indexPath = new URL("index.json", directory);
 const checkOnly = process.argv.slice(2).includes("--check");
 if (process.argv.slice(2).some((arg) => arg !== "--check")) {
@@ -17,18 +20,28 @@ const names = readdirSync(directory, { withFileTypes: true })
 const skills = names.map((directoryName) => {
   const artifact = new URL(`${directoryName}/SKILL.md`, directory);
   const bytes = readFileSync(artifact);
-  const frontmatter = bytes.toString("utf8").match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/)?.[1];
-  if (!frontmatter) throw new Error(`Missing frontmatter: ${fileURLToPath(artifact)}`);
+  const frontmatter = bytes
+    .toString("utf8")
+    .match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/)?.[1];
+  if (!frontmatter)
+    throw new Error(`Missing frontmatter: ${fileURLToPath(artifact)}`);
 
   const name = frontmatter.match(/^name: ([a-z0-9]+(?:-[a-z0-9]+)*)\r?$/m)?.[1];
   if (!name || name.length > 64 || name !== directoryName) {
     throw new Error(`Invalid or mismatched skill name: ${directoryName}`);
   }
   // A single JSON-quoted description is valid YAML and needs no YAML dependency.
-  const descriptionLine = frontmatter.match(/^description: ("[^\r\n]*")\r?$/m)?.[1];
-  if (!descriptionLine) throw new Error(`Use a single JSON-quoted description in ${name}/SKILL.md`);
+  const descriptionLine = frontmatter.match(
+    /^description: ("[^\r\n]*")\r?$/m,
+  )?.[1];
+  if (!descriptionLine)
+    throw new Error(`Use a single JSON-quoted description in ${name}/SKILL.md`);
   const description = JSON.parse(descriptionLine);
-  if (typeof description !== "string" || !description.trim() || description.length > 1024) {
+  if (
+    typeof description !== "string" ||
+    !description.trim() ||
+    description.length > 1024
+  ) {
     throw new Error(`Invalid skill description: ${name}`);
   }
 
@@ -48,7 +61,9 @@ const index = {
 const serialized = `${JSON.stringify(index, null, 2)}\n`;
 if (checkOnly) {
   if (readFileSync(indexPath, "utf8") !== serialized) {
-    throw new Error("Skills index is stale. Run pnpm skills:generate and commit the updated index.");
+    throw new Error(
+      "Skills index is stale. Run pnpm skills:generate and commit the updated index.",
+    );
   }
   console.log(`Skills index verified (${skills.length} skill).`);
 } else {

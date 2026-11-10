@@ -4,7 +4,8 @@ export const a2aProtocolVersion = "1.0";
 export const agentCard = {
   name: "EmbodyStar Content Agent",
   version: "1.0.0",
-  description: "Returns EmbodyStar's published project overview, exploration areas, conceptual architecture, open-source resources, and FAQs as Markdown. A stateless, read-only content service; each valid text request retrieves the current overview.",
+  description:
+    "Returns EmbodyStar's published project overview, exploration areas, conceptual architecture, open-source resources, and FAQs as Markdown. A stateless, read-only content service; each valid text request retrieves the current overview.",
   supportedInterfaces: [
     {
       url: "https://embodystar.com/api/a2a",
@@ -25,9 +26,18 @@ export const agentCard = {
     {
       id: "get-public-content",
       name: "Retrieve public project content",
-      description: "Retrieves the complete published EmbodyStar overview in Markdown, including project focus, conceptual architecture, resource links, and FAQs. Request text does not filter or change the returned content. No robot control, model inference, or persistent conversation is provided.",
-      tags: ["embodied-intelligence", "project-information", "documentation", "resources"],
-      examples: ["Get the EmbodyStar project overview.", "Retrieve the public documentation and resource links."],
+      description:
+        "Retrieves the complete published EmbodyStar overview in Markdown, including project focus, conceptual architecture, resource links, and FAQs. Request text does not filter or change the returned content. No robot control, model inference, or persistent conversation is provided.",
+      tags: [
+        "embodied-intelligence",
+        "project-information",
+        "documentation",
+        "resources",
+      ],
+      examples: [
+        "Get the EmbodyStar project overview.",
+        "Retrieve the public documentation and resource links.",
+      ],
     },
   ],
 };

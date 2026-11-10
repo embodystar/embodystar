@@ -8,7 +8,9 @@
     "start": "next start",
     "test": "node scripts/generate-skills-index.mjs --check && node --test tests/*.test.mjs",
     "skills:generate": "node scripts/generate-skills-index.mjs",
-    "lint": "eslint"
+    "lint": "eslint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.4.0",
@@ -19,13 +21,12 @@
   },
   "devDependencies": {
     "@modelcontextprotocol/client": "2.4.0",
-    "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.3",
-    "tailwindcss": "^4",
+    "prettier": "^3.9.10",
     "typescript": "^5"
   },
   "packageManager": "pnpm@12.16.1"

@@ -8,10 +8,15 @@ const headers = {
 };
 
 function notModified(request?: Request) {
-  return request?.headers.get("if-none-match")?.split(",").some((value) => {
-    const tag = value.trim();
-    return tag === "*" || tag.replace(/^W\//, "") === etag.replace(/^W\//, "");
-  });
+  return request?.headers
+    .get("if-none-match")
+    ?.split(",")
+    .some((value) => {
+      const tag = value.trim();
+      return (
+        tag === "*" || tag.replace(/^W\//, "") === etag.replace(/^W\//, "")
+      );
+    });
 }
 
 export function GET(request?: Request) {
@@ -20,5 +25,8 @@ export function GET(request?: Request) {
 }
 
 export function HEAD(request?: Request) {
-  return new Response(null, { status: notModified(request) ? 304 : 200, headers });
+  return new Response(null, {
+    status: notModified(request) ? 304 : 200,
+    headers,
+  });
 }

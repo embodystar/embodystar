@@ -4,7 +4,14 @@ An English landing page about embodied intelligence, built with Next.js 16 and R
 
 ## Development
 
-Run `pnpm dev` to preview at `http://localhost:3000`, `pnpm test` for content negotiation, discovery, A2A, MCP, crawler-policy, and sitemap checks, and `pnpm build` for a production build.
+Install dependencies with `pnpm install --frozen-lockfile`, then run `pnpm dev` to preview at `http://localhost:3000`.
+
+- `pnpm lint` checks the JavaScript and TypeScript source.
+- `pnpm test` checks content negotiation, discovery, A2A, MCP, crawler policy, and the sitemap.
+- `pnpm format` formats source and project documentation; `pnpm format:check` verifies formatting. Published artifacts, generated files, and third-party licenses are excluded.
+- `pnpm build` creates a production build; `pnpm start` serves it.
+
+Styles use plain CSS in `app/globals.css`, `app/base.css`, and `app/tokens.css`.
 
 ## Content
 
@@ -48,7 +55,7 @@ Confirm that `checks.discovery.apiCatalog.status` is `"pass"`.
 
 `POST /api/a2a` handles `SendMessage` by returning the existing public Markdown overview as a direct A2A message. It is stateless, makes no external model calls, and exposes no robot-control capability. Streaming, push notifications, and extended agent cards are disabled. The endpoint limits request bodies to 64 KiB and returns protocol errors for invalid or unsupported requests.
 
-The API catalog also lists this interface, with `public/a2a-openapi.json` and `public/a2a-docs.md` describing the service. These Next.js Route Handlers deploy through the existing Cloudflare Workers build; no separate Agents SDK service or Durable Object binding is required for this synchronous content adapter.
+The API catalog also lists this interface, with `public/a2a-openapi.json` and `public/a2a-docs.md` describing the service. The Next.js Route Handler runs with the application; no separate agent service is required for this synchronous content adapter.
 
 Run `pnpm test` for Agent Card and service contract checks. After publishing, use the scan command above and confirm `checks.discovery.a2aAgentCard.status` is `"pass"`.
 
@@ -66,6 +73,6 @@ After publishing, run the scan command above and confirm `checks.discovery.agent
 
 `/.well-known/mcp/server-card.json` publishes the requested compatibility Server Card with `serverInfo`, a Streamable HTTP `transport.endpoint`, and the service's supported capabilities. The accepted [SEP-2127](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2127) uses a different card format: `/mcp/server-card` publishes that format, linked from `/.well-known/ai-catalog.json`. Metadata comes from `lib/mcp-server-card.ts`; all three discovery documents support GET and HEAD, public CORS, and five-minute caching.
 
-`POST /mcp` uses the official MCP TypeScript SDK's Web Standard handler on the existing Cloudflare deployment. Its `get_public_content` tool and `public-content` resource both return the site's published Markdown overview. The service is public and stateless, supports current and legacy clients, and limits request bodies to 64 KiB. It offers no prompts, subscriptions, persistent SSE sessions, external model calls, or robot control.
+`POST /mcp` uses the official MCP TypeScript SDK's Web Standard handler through a Next.js Route Handler. Its `get_public_content` tool and `public-content` resource both return the site's published Markdown overview. The service is public and stateless, supports current and legacy clients, and limits request bodies to 64 KiB. It offers no prompts, subscriptions, persistent SSE sessions, external model calls, or robot control.
 
 The API catalog links the service, `public/mcp-openapi.json`, and `public/mcp-docs.md`. `pnpm test` exercises discovery and tool/resource access through the official MCP client. After deployment, run the scan command above and confirm `checks.discovery.mcpServerCard.status` is `"pass"`.

@@ -1,0 +1,15 @@
+# Generated output and local tooling state
+.next/
+out/
+build/
+coverage/
+.agents/
+.aws/
+.codex/
+.hallmark/
+next-env.d.ts
+pnpm-lock.yaml
+AGENTS.md
+
+# Published artifacts, generated discovery files, and third-party licenses
+public/

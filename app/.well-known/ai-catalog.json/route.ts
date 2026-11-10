@@ -1,6 +1,9 @@
 import { aiCatalog, mcpDiscoveryHeaders } from "../../../lib/mcp-server-card";
 
-const headers = { ...mcpDiscoveryHeaders, "Content-Type": "application/ai-catalog+json" };
+const headers = {
+  ...mcpDiscoveryHeaders,
+  "Content-Type": "application/ai-catalog+json",
+};
 
 export function GET() {
   return Response.json(aiCatalog, { headers });
@@ -11,5 +14,8 @@ export function HEAD() {
 }
 
 export function OPTIONS() {
-  return new Response(null, { status: 204, headers: { ...mcpDiscoveryHeaders, Allow: "GET, HEAD, OPTIONS" } });
+  return new Response(null, {
+    status: 204,
+    headers: { ...mcpDiscoveryHeaders, Allow: "GET, HEAD, OPTIONS" },
+  });
 }

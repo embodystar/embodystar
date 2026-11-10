@@ -1,12 +1,18 @@
 export const mcpEndpoint = "https://embodystar.com/mcp";
 export const mcpResourceUri = "https://embodystar.com/";
-export const mcpSupportedProtocolVersions = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
+export const mcpSupportedProtocolVersions = [
+  "2026-07-28",
+  "2025-11-25",
+  "2025-06-18",
+  "2025-03-26",
+];
 
 export const mcpServerInfo = {
   name: "com.embodystar/content",
   title: "EmbodyStar Content Server",
   version: "1.0.0",
-  description: "Read EmbodyStar's public project overview, architecture concepts, resources, and FAQs.",
+  description:
+    "Read EmbodyStar's public project overview, architecture concepts, resources, and FAQs.",
   websiteUrl: "https://embodystar.com",
 };
 
@@ -29,22 +35,27 @@ export const mcpServerCard = {
 
 // The accepted SEP-2127 format keeps runtime capabilities in the MCP protocol.
 export const canonicalMcpServerCard = {
-  $schema: "https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json",
+  $schema:
+    "https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json",
   ...mcpServerInfo,
-  remotes: [{
-    type: "streamable-http",
-    url: mcpEndpoint,
-    supportedProtocolVersions: mcpSupportedProtocolVersions,
-  }],
+  remotes: [
+    {
+      type: "streamable-http",
+      url: mcpEndpoint,
+      supportedProtocolVersions: mcpSupportedProtocolVersions,
+    },
+  ],
 };
 
 export const aiCatalog = {
   specVersion: "1.0",
-  entries: [{
-    identifier: "urn:air:embodystar.com:mcp:content",
-    type: "application/mcp-server-card+json",
-    url: `${mcpEndpoint}/server-card`,
-  }],
+  entries: [
+    {
+      identifier: "urn:air:embodystar.com:mcp:content",
+      type: "application/mcp-server-card+json",
+      url: `${mcpEndpoint}/server-card`,
+    },
+  ],
 };
 
 export const mcpDiscoveryHeaders = {
